@@ -1,0 +1,154 @@
+﻿@page "/questions"
+@rendermode InteractiveServer
+@inject IQuizContainer quizContainer
+@inject IQuestionService questionService
+
+<h3>@_quiz.QuizName questions</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th width="400">Spørgsmål</th>
+            <th width="150">Første svar</th>
+            <th width="150">Andet svar</th>
+            <th width="150">Tredje svar</th>
+            <th width="150">Fjerde svar</th>
+            <th width="150">Korrekte svar</th>
+            <th width="110">Sekunder</th>
+            <th width="150">Sværhedsgrad</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (_quiz.Questions.Any())
+        {
+            @foreach (var question in _quiz.Questions)
+            {
+                <tr>
+                    <td class="question-cell">@((MarkupString)question.Text.Replace("\n", "<br />"))</td>
+                    <td class="answer-cell">@question.FirstAnswer</td>
+                    <td class="answer-cell">@question.SecondAnswer</td>
+                    <td class="answer-cell">@question.ThirdAnswer</td>
+                    <td class="answer-cell">@question.FourthAnswer</td>
+                    <td>@question.CorrectAnswer</td>
+                    <td>@question.Seconds</td>
+                    <td>@question.Difficulty</td>
+                    <td><button @onclick="() => EditQuestion(question)">Redigér</button></td>
+                    <td><button @onclick="() => DeleteQuestion(question)">Slet</button></td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td>Der er ingen spørgsmål til denne quiz</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+<EditForm Model="@_question" OnValidSubmit="AddQuestion" FormName="AddQuestion">
+    <table>
+        <thead>
+            <tr>
+                <th width="400">Spørgsmål</th>
+                <th width="150">Første svar</th>
+                <th width="150">Andet svar</th>
+                <th width="150">Tredje svar</th>
+                <th width="150">Fjerde svar</th>
+                <th width="150">Korrekte svar</th>
+                <th width="110">Sekunder</th>
+                <th width="150">Sværhedsgrad</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><textarea class="full-width" type="text" placeholder="Spørgsmål" @bind="_question.Text" required></textarea></td>
+                <td><input class="full-width" type="text" placeholder="Første svar" @bind="_question.FirstAnswer" required /></td>
+                <td><input class="full-width" type="text" placeholder="Andet svar" @bind="_question.SecondAnswer" required /></td>
+                <td><input class="full-width" type="text" placeholder="Trejde svar" @bind="_question.ThirdAnswer" required /></td>
+                <td><input class="full-width" type="text" placeholder="Fjerde svar" @bind="_question.FourthAnswer" required /></td>
+                <td><input class="full-width" type="text" placeholder="Korrekte svar" @bind="_question.CorrectAnswer" required /></td>
+                <td><input class="full-width" type="text" placeholder="Sekunder" @bind="_question.Seconds" required /></td>
+                <td>
+                    <select class="full-width" @bind="_question.Difficulty">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                    </select>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    @if (@_question.QuestionId == 0)
+    {
+        <button type="button" @onclick="AddQuestion">Tilføj spørgsmål</button>
+    }
+    else
+    {
+        <button type="button" @onclick="UpdateQuestion">Redigér spørgsmål</button>
+        <button type="button" @onclick="ClearForm">Anullér</button>
+    }
+</EditForm>
+
+@code {
+    private Quiz _quiz = null!;
+    private Question _question = new();
+
+    protected override void OnInitialized()
+    {
+        _quiz = quizContainer.Quiz;
+    }
+
+    private void AddQuestion()
+    {
+        _question.QuizId = _quiz.QuizId;
+
+        questionService.CreateQuestion(_question);
+
+        _question = new();
+
+        _quiz = quizContainer.Quiz;
+    }
+
+    private void DeleteQuestion(Question selectedQuestion)
+    {
+        questionService.DeleteQuestion(selectedQuestion);
+
+        _quiz = quizContainer.Quiz;
+    }
+
+    private void EditQuestion(Question selected)
+    {
+        _question = new Question
+            {
+                QuestionId = selected.QuestionId,
+                QuizId = selected.QuizId,
+                Text = selected.Text,
+                FirstAnswer = selected.FirstAnswer,
+                SecondAnswer = selected.SecondAnswer,
+                ThirdAnswer = selected.ThirdAnswer,
+                FourthAnswer = selected.FourthAnswer,
+                CorrectAnswer = selected.CorrectAnswer,
+                Seconds = selected.Seconds,
+                Difficulty = selected.Difficulty
+            };
+    }
+
+    private void UpdateQuestion()
+    {
+        questionService.UpdateQuestion(_question);
+        _quiz = quizContainer.Quiz;
+        _question = new Question();
+    }
+
+    private void ClearForm()
+    {
+        _question = new Question();
+    }
+}

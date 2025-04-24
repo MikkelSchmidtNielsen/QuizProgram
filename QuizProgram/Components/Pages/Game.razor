@@ -1,0 +1,151 @@
+﻿@page "/game"
+@using QuizProgram.Models
+@rendermode InteractiveServer
+@inject IGameService gameService
+@inject IGameStateContainer gameStateContainer
+@inject IQuizAPIService quizAPIService
+@inject IJSRuntime jSRuntime
+@inject NavigationManager navigationManager
+
+<div class="@GetQuizThemeClass()">
+    <h1 class="center">@_gameState.Quiz.QuizName</h1>
+
+    <div class="question-container">
+        <h4 class="transparent-background">@((MarkupString)_gameState.Quiz.Questions[_gameState.CurrentQuestionIndex].Text.Replace("\n", "<br />"))</h4>
+    </div>
+
+    <div class="answer-container">
+        @foreach (var answer in _shuffledAnswers)
+        {
+            <button class="@GetAnswerButtonClass(answer.Index)" @onclick="()=>AnswerQuiz(answer.Index)">@answer.Text</button>
+        }
+    </div>
+
+    <p class="center points">Your points: @_playerPoints</p>
+    @if (_gameState.ComboCount >= 2)
+    {
+        <p class="combo">🔥 Combo x@_gameState.ComboCount!</p>
+    }
+</div>
+
+<button @onmouseover="StartRecording" @onmouseout="StopAndTranscribe">
+    🎤 Hover to Speak
+</button>
+
+<p>@_transcribedText</p>
+
+@code {
+    private GameState _gameState = null!;
+
+    private List<AnswerOption> _shuffledAnswers = null!;
+
+    private decimal _playerPoints = 0;
+
+    private string _transcribedText = string.Empty;
+
+    private int? _selectedAnswerIndex = null;
+
+    private bool _answered = false;
+
+    protected override void OnInitialized()
+    {
+        _gameState = gameService.SubmitAnswer(0);
+        ShuffleAnswers();
+    }
+
+    private string GetQuizThemeClass()
+    {
+        var theme = _gameState.Quiz.QuizName.ToLower() switch
+        {
+            "harry potter" => "harry-potter-theme",
+            "star wars" => "star-wars-theme",
+            _ => ""
+        };
+
+        return theme;
+    }
+
+    private async Task AnswerQuiz(int answer)
+    {
+        if (_answered)
+        {
+            return;
+        }
+
+        _selectedAnswerIndex = answer;
+        _answered = true;
+
+        var state = gameService.SubmitAnswer(answer);
+        
+        if (state.ComboCount == 3)
+        {
+            await jSRuntime.InvokeVoidAsync("playComboSound");
+        }
+
+        await Task.Delay(2000);
+        _answered = false;
+
+        if (_gameState.Quiz.Questions[state.CurrentQuestionIndex].Text == "NO MORE")
+        {
+            state.Points += _playerPoints;
+            gameStateContainer.GameState = state;
+            navigationManager.NavigateTo("/results");
+        }
+        else
+        {
+            _gameState = state;
+            _playerPoints += state.Points;
+            ShuffleAnswers();
+        }
+    }
+
+    private void ShuffleAnswers()
+    {
+        var question = _gameState.Quiz.Questions[_gameState.CurrentQuestionIndex];
+        var answers = new List<AnswerOption>
+        {
+            new () { Index = 1, Text = question.FirstAnswer },
+            new () { Index = 2, Text = question.SecondAnswer },
+            new () { Index = 3, Text = question.ThirdAnswer },
+            new () { Index = 4, Text = question.FourthAnswer }
+        };
+
+        var random = new Random();
+        _shuffledAnswers = answers.OrderBy(option => random.Next()).ToList();
+    }
+
+    private string GetAnswerButtonClass(int answerIndex)
+    {
+        string answerButtonClass = string.Empty;
+
+        if (_answered == false)
+        {
+            answerButtonClass = "hover-enabled";
+        }
+        else
+        {
+            var correctAnswerIndex = _gameState.Quiz.Questions[_gameState.CurrentQuestionIndex].CorrectAnswer;
+
+            if (answerIndex == correctAnswerIndex)
+            {
+                answerButtonClass = "correct-answer";
+            }
+            else if (answerIndex == _selectedAnswerIndex)
+            {
+                answerButtonClass = "incorrect-answer";
+            }
+        }
+
+        return answerButtonClass;
+    }
+
+    private async Task StartRecording()
+    {
+        await jSRuntime.InvokeVoidAsync("SetupAudio", true);
+    }
+
+    private async Task StopAndTranscribe()
+    {
+        await jSRuntime.InvokeVoidAsync("ToggleMic", false);
+    }
+}

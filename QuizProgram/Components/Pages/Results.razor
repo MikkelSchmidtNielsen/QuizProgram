@@ -1,0 +1,15 @@
+﻿@page "/results"
+@inject IGameStateContainer gameStateContainer
+
+<h3>End of @_gameState.Quiz.QuizName quiz</h3>
+
+<p>Din slutscore er @_gameState.Points</p>
+
+@code {
+    private GameState _gameState = null!;
+
+    protected override void OnInitialized()
+    {
+        _gameState = gameStateContainer.GameState;
+    }
+}

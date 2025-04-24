@@ -1,0 +1,40 @@
+﻿@page "/lobby"
+@rendermode InteractiveServer
+@inject NavigationManager navigationManager
+@inject IQuizService quizService
+@inject IQuizContainer quizContainer
+
+<h3>Lobby</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th width="300">Quiz Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var quiz in Quizzes)
+        {
+            <tr>
+                <td>@quiz.QuizName</td>
+                <td><button @onclick="() => SelectQuiz(quiz)">Vælg quiz</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Quiz> Quizzes { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Quizzes = await quizService.GetAllQuizzes();
+    }
+
+    public void SelectQuiz(Quiz selectedQuiz)
+    {
+        quizContainer.SetSelectedQuiz(selectedQuiz);
+
+        navigationManager.NavigateTo("/game");
+    }
+}

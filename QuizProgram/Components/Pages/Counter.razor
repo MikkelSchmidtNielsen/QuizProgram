@@ -1,0 +1,86 @@
+﻿@page "/quiz"
+@rendermode InteractiveServer
+@inject NavigationManager navigationManager
+@inject IQuizService quizService
+@inject IQuizContainer quizContainer
+
+<PageTitle>Quiz</PageTitle>
+
+<h1>Quizzes</h1>
+
+<EditForm Model="@this" OnValidSubmit="CreateQuiz">
+    <table>
+        <thead>
+            <tr>
+                <th width="300">Quiz Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="Enter Quiz Name" pattern="[A-Za-zÆØÅæøå ]+" @bind-value="QuizName" required /></td>
+            </tr>
+        </tbody>
+    </table>
+    <button>Create Quiz</button>
+</EditForm>
+
+
+<EditForm Model="@this">
+    <table>
+        <thead>
+            <tr>
+                <th width="300">Quiz Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var quiz in Quizzes)
+            {
+                <tr>
+                    <td>@quiz.QuizName</td>
+                    <td><button @onclick="() => EditQuiz(quiz)">Redigér</button></td>
+                    <td><button @onclick="() => DeleteQuiz(quiz)">Slet</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</EditForm>
+
+
+@code {
+    private int currentCount = 0;
+    private List<Quiz> Quizzes { get; set; } = new();
+    private string QuizName { get; set; } = null!;
+    private bool _isSelected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Quizzes = await quizService.GetAllQuizzes();
+    }
+
+    private async Task CreateQuiz()
+    {
+        QuizName = Regex.Replace(QuizName.Trim(), @"\s+", " "); // Removes whitespaces before, between and after input
+
+        QuizName = char.ToUpper(QuizName[0]) + QuizName.Substring(1).ToLower();
+
+        quizService.CreateQuiz(QuizName);
+
+        Quizzes = await quizService.GetAllQuizzes();
+    }
+
+    private async Task DeleteQuiz(Quiz selectedQuiz)
+    {
+        quizService.DeleteQuiz(selectedQuiz);
+
+        Quizzes = await quizService.GetAllQuizzes();
+    }
+
+    private void EditQuiz(Quiz selectedQuiz)
+    {
+        if (selectedQuiz != null)
+        {
+            quizContainer.SetSelectedQuiz(selectedQuiz);
+            navigationManager.NavigateTo("/questions");
+        }
+    }
+}

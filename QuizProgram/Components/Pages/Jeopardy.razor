@@ -1,0 +1,57 @@
+﻿@page "/jeopardy"
+@inject IQuizContainer quizContainer
+@inject IGameService gameService
+
+<h1>@_quiz.QuizName</h1>
+
+<div class="table">
+    <section>
+        <p @onclick="()=>ShowQuestion(1)">100</p>
+        <p @onclick="()=>ShowQuestion(2)">200</p>
+        <p @onclick="()=>ShowQuestion(3)">300</p>
+        <p @onclick="()=>ShowQuestion(4)">400</p>
+        <p @onclick="()=>ShowQuestion(5)">500</p>
+    </section>
+    <section>
+        <p @onclick="()=>ShowQuestion(1)">100</p>
+        <p @onclick="()=>ShowQuestion(2)">200</p>
+        <p @onclick="()=>ShowQuestion(3)">300</p>
+        <p @onclick="()=>ShowQuestion(4)">400</p>
+        <p @onclick="()=>ShowQuestion(5)">500</p>
+    </section>
+    <section>
+        <p @onclick="()=>ShowQuestion(1)">100</p>
+        <p @onclick="()=>ShowQuestion(2)">200</p>
+        <p @onclick="()=>ShowQuestion(3)">300</p>
+        <p @onclick="()=>ShowQuestion(4)">400</p>
+        <p @onclick="()=>ShowQuestion(5)">500</p>
+    </section>
+    <section>
+        <p @onclick="()=>ShowQuestion(1)">100</p>
+        <p @onclick="()=>ShowQuestion(2)">200</p>
+        <p @onclick="()=>ShowQuestion(3)">300</p>
+        <p @onclick="()=>ShowQuestion(4)">400</p>
+        <p @onclick="()=>ShowQuestion(5)">500</p>
+    </section>
+    <section>
+        <p @onclick="()=>ShowQuestion(1)">100</p>
+        <p @onclick="()=>ShowQuestion(2)">200</p>
+        <p @onclick="()=>ShowQuestion(3)">300</p>
+        <p @onclick="()=>ShowQuestion(4)">400</p>
+        <p @onclick="()=>ShowQuestion(5)">500</p>
+    </section>
+</div>
+
+@code {
+    private Quiz _quiz = null!;
+
+    protected override void OnInitialized()
+    {
+        _quiz = quizContainer.Quiz;
+    }
+
+    private void ShowQuestion(int difficulty)
+    {
+        
+    }
+}
