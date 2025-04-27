@@ -3,27 +3,74 @@
 
 h1 {
     display: flex;
+    font-family: 'Harry P';
     justify-content: center;
 }
 
-.table {
-    display: grid;
-    grid-template-columns: repeat(5, 200px);
-    grid-template-rows: 100px, 100px;
-    gap: 10px;
-    padding: 10px;
-    justify-content: center;
+h2 {
+    font-family: InkPot;
+    color: #1C1C1C;
 }
 
-.table p {
-    display: flex;
-    justify-content: center;
-    padding: 50px;
+table {
+    border-spacing: 10px;
+    border-collapse: separate;
+}
+
+thead {
+    font-family: 'Animales Fantastic';
+    word-wrap: break-word;
+    text-align: center;
+}
+
+tbody td {
+    font-family: InkPot;
+    font-size: 42px;
+    text-align: center;
+    padding: 24px;
     background-color: aliceblue;
 }
 
-.table p:hover {
+tbody td:hover {
     background-color: aqua;
     transform: scale(1.1);
     cursor: pointer;
+}
+
+.video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+}
+
+.fullscreen-video {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotateX(35deg);
+    color: white;
+    font-size: 6rem;
+    font-weight: bold;
+    z-index: 2;
+    text-align: center;
+    opacity: 0; /* Start med teksten skjult */
+    transition: opacity 2s ease-in; /* Fader ind over 2 sekunder */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.fade-in-text {
+    opacity: 1;
 }

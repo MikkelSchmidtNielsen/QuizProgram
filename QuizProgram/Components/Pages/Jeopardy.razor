@@ -1,57 +1,98 @@
 ﻿@page "/jeopardy"
+@rendermode InteractiveServer
 @inject IQuizContainer quizContainer
 @inject IGameService gameService
+@inject IJSRuntime JSRuntime
 
 <h1>@_quiz.QuizName</h1>
 
-<div class="table">
-    <section>
-        <p @onclick="()=>ShowQuestion(1)">100</p>
-        <p @onclick="()=>ShowQuestion(2)">200</p>
-        <p @onclick="()=>ShowQuestion(3)">300</p>
-        <p @onclick="()=>ShowQuestion(4)">400</p>
-        <p @onclick="()=>ShowQuestion(5)">500</p>
-    </section>
-    <section>
-        <p @onclick="()=>ShowQuestion(1)">100</p>
-        <p @onclick="()=>ShowQuestion(2)">200</p>
-        <p @onclick="()=>ShowQuestion(3)">300</p>
-        <p @onclick="()=>ShowQuestion(4)">400</p>
-        <p @onclick="()=>ShowQuestion(5)">500</p>
-    </section>
-    <section>
-        <p @onclick="()=>ShowQuestion(1)">100</p>
-        <p @onclick="()=>ShowQuestion(2)">200</p>
-        <p @onclick="()=>ShowQuestion(3)">300</p>
-        <p @onclick="()=>ShowQuestion(4)">400</p>
-        <p @onclick="()=>ShowQuestion(5)">500</p>
-    </section>
-    <section>
-        <p @onclick="()=>ShowQuestion(1)">100</p>
-        <p @onclick="()=>ShowQuestion(2)">200</p>
-        <p @onclick="()=>ShowQuestion(3)">300</p>
-        <p @onclick="()=>ShowQuestion(4)">400</p>
-        <p @onclick="()=>ShowQuestion(5)">500</p>
-    </section>
-    <section>
-        <p @onclick="()=>ShowQuestion(1)">100</p>
-        <p @onclick="()=>ShowQuestion(2)">200</p>
-        <p @onclick="()=>ShowQuestion(3)">300</p>
-        <p @onclick="()=>ShowQuestion(4)">400</p>
-        <p @onclick="()=>ShowQuestion(5)">500</p>
-    </section>
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <td width="250">Halfblood prince</td>
+                <td width="250">Hogwarts History</td>
+                <td width="250">Muggles World</td>
+                <td width="250">Four Houses of Hogwarts</td>
+                <td width="250">Random Pipes</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
+                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
+                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
+                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
+                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
+            </tr>
+            <tr>
+                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
+                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
+                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
+                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
+                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
+            </tr>
+            <tr>
+                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
+                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
+                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
+                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
+                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
+            </tr>
+            <tr>
+                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
+                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
+                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
+                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
+                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
+            </tr>
+            <tr>
+                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
+                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
+                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
+                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
+                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
+
+@if (_showVideo == true)
+{
+    <div @onclick="HideQuestion" class="video-container">
+        <video id="bookVideo" class="fullscreen-video" autoplay>
+            <source src="video/book.mp4" type="video/mp4" />
+        </video>
+        <div class="overlay-text @textClass">
+            <h2>@_question.Text</h2>
+        </div>
+    </div>
+}
 
 @code {
     private Quiz _quiz = null!;
+    private Question? _question;
+    private bool _showVideo = false;
+    private string textClass = string.Empty;
 
     protected override void OnInitialized()
     {
         _quiz = quizContainer.Quiz;
     }
 
-    private void ShowQuestion(int difficulty)
+    private async Task ShowQuestion(int difficulty)
     {
-        
+        _showVideo = true;
+        _question = _quiz.Questions.FirstOrDefault(q => q.Difficulty == difficulty);
+        await Task.Delay(100);
+        await JSRuntime.InvokeVoidAsync("playVideo");
+        await Task.Delay(2000);
+        textClass = "fade-in-text";
+    }
+
+    private void HideQuestion()
+    {
+        _showVideo = false;
+        textClass = string.Empty;
     }
 }
