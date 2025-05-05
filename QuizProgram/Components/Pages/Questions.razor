@@ -8,14 +8,33 @@
 <table>
     <thead>
         <tr>
-            <th width="400">Spørgsmål</th>
+            <th width="325">Spørgsmål</th>
             <th width="150">Første svar</th>
             <th width="150">Andet svar</th>
             <th width="150">Tredje svar</th>
             <th width="150">Fjerde svar</th>
+            <th width="115" @onclick="@(()=>SortBy("Category"))">
+                Kategori
+                @if (_currentSort == "Category")
+                {
+                    <span class="sort-arrow @(_descending ? "desc" : "asc")"></span>
+                }
+            </th>
             <th width="150">Korrekte svar</th>
-            <th width="110">Sekunder</th>
-            <th width="150">Sværhedsgrad</th>
+            <th width="125" @onclick="@(()=>SortBy("Seconds"))">
+                Sekunder
+                @if (_currentSort == "Seconds")
+                {
+                    <span class="sort-arrow @(_descending ? "desc" : "asc")"></span>
+                }
+            </th>
+            <th width="165" @onclick="@(()=>SortBy("Difficulty"))">
+                Sværhedsgrad
+                @if (_currentSort == "Difficulty")
+                {
+                    <span class="sort-arrow @(_descending ? "desc" : "asc")"></span>
+                }
+            </th>
             <th></th>
             <th></th>
         </tr>
@@ -26,16 +45,42 @@
             @foreach (var question in _quiz.Questions)
             {
                 <tr>
-                    <td class="question-cell">@((MarkupString)question.Text.Replace("\n", "<br />"))</td>
-                    <td class="answer-cell">@question.FirstAnswer</td>
-                    <td class="answer-cell">@question.SecondAnswer</td>
-                    <td class="answer-cell">@question.ThirdAnswer</td>
-                    <td class="answer-cell">@question.FourthAnswer</td>
-                    <td>@question.CorrectAnswer</td>
-                    <td>@question.Seconds</td>
-                    <td>@question.Difficulty</td>
-                    <td><button @onclick="() => EditQuestion(question)">Redigér</button></td>
-                    <td><button @onclick="() => DeleteQuestion(question)">Slet</button></td>
+                    @if (@question.IsEditing == false)
+                    {
+                        <td class="question-cell">@((MarkupString)question.Text.Replace("\n", "<br />"))</td>
+                        <td class="answer-cell">@question.FirstAnswer</td>
+                        <td class="answer-cell">@question.SecondAnswer</td>
+                        <td class="answer-cell">@question.ThirdAnswer</td>
+                        <td class="answer-cell">@question.FourthAnswer</td>
+                        <td>@question.Category</td>
+                        <td>@question.CorrectAnswer</td>
+                        <td>@question.Seconds</td>
+                        <td>@question.Difficulty</td>
+                        <td><button @onclick="() => EditQuestion(question)">Redigér</button></td>
+                        <td><button @onclick="() => DeleteQuestion(question)">Slet</button></td>
+                    }
+                    else
+                    {
+                        <td><textarea class="full-width" type="text" placeholder="Spørgsmål" @bind="@question.Text" required></textarea></td>
+                        <td><input class="full-width" type="text" placeholder="Første svar" @bind="@question.FirstAnswer" required /></td>
+                        <td><input class="full-width" type="text" placeholder="Andet svar" @bind="@question.SecondAnswer" required /></td>
+                        <td><input class="full-width" type="text" placeholder="Trejde svar" @bind="@question.ThirdAnswer" required /></td>
+                        <td><input class="full-width" type="text" placeholder="Fjerde svar" @bind="@question.FourthAnswer" required /></td>
+                        <td><input class="full-width" type="text" placeholder="Kategori" @bind="@question.Category" required /></td>
+                        <td><input class="full-width" type="text" placeholder="Korrekte svar" @bind="@question.CorrectAnswer" required /></td>
+                        <td><input class="full-width" type="text" placeholder="Sekunder" @bind="@question.Seconds" required /></td>
+                        <td>
+                            <select class="full-width" @bind="@question.Difficulty">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </td>
+                        <td><button type="button" @onclick="()=>UpdateQuestion(question)">Redigér</button></td>
+                        <td><button type="button" @onclick="()=>CancelUpdate(question)">Anullér</button></td>
+                    }
                 </tr>
             }
         }
@@ -59,6 +104,7 @@
                 <th width="150">Andet svar</th>
                 <th width="150">Tredje svar</th>
                 <th width="150">Fjerde svar</th>
+                <th width="100">Kategori</th>
                 <th width="150">Korrekte svar</th>
                 <th width="110">Sekunder</th>
                 <th width="150">Sværhedsgrad</th>
@@ -71,6 +117,7 @@
                 <td><input class="full-width" type="text" placeholder="Andet svar" @bind="_question.SecondAnswer" required /></td>
                 <td><input class="full-width" type="text" placeholder="Trejde svar" @bind="_question.ThirdAnswer" required /></td>
                 <td><input class="full-width" type="text" placeholder="Fjerde svar" @bind="_question.FourthAnswer" required /></td>
+                <td><input class="full-width" type="text" placeholder="Kategori" @bind="_question.Category" required /></td>
                 <td><input class="full-width" type="text" placeholder="Korrekte svar" @bind="_question.CorrectAnswer" required /></td>
                 <td><input class="full-width" type="text" placeholder="Sekunder" @bind="_question.Seconds" required /></td>
                 <td>
@@ -85,20 +132,14 @@
             </tr>
         </tbody>
     </table>
-    @if (@_question.QuestionId == 0)
-    {
-        <button type="button" @onclick="AddQuestion">Tilføj spørgsmål</button>
-    }
-    else
-    {
-        <button type="button" @onclick="UpdateQuestion">Redigér spørgsmål</button>
-        <button type="button" @onclick="ClearForm">Anullér</button>
-    }
+    <button type="button" @onclick="AddQuestion">Tilføj spørgsmål</button>
 </EditForm>
 
 @code {
     private Quiz _quiz = null!;
     private Question _question = new();
+    private bool _descending = false;
+    private string _currentSort = string.Empty;
 
     protected override void OnInitialized()
     {
@@ -125,30 +166,35 @@
 
     private void EditQuestion(Question selected)
     {
-        _question = new Question
-            {
-                QuestionId = selected.QuestionId,
-                QuizId = selected.QuizId,
-                Text = selected.Text,
-                FirstAnswer = selected.FirstAnswer,
-                SecondAnswer = selected.SecondAnswer,
-                ThirdAnswer = selected.ThirdAnswer,
-                FourthAnswer = selected.FourthAnswer,
-                CorrectAnswer = selected.CorrectAnswer,
-                Seconds = selected.Seconds,
-                Difficulty = selected.Difficulty
-            };
+        selected.IsEditing = true;
     }
 
-    private void UpdateQuestion()
+    private void UpdateQuestion(Question updatedQuestion)
     {
-        questionService.UpdateQuestion(_question);
+        questionService.UpdateQuestion(updatedQuestion);
+
         _quiz = quizContainer.Quiz;
-        _question = new Question();
+
+        updatedQuestion.IsEditing = false;
     }
 
-    private void ClearForm()
+    private void CancelUpdate(Question selected)
     {
-        _question = new Question();
+        selected.IsEditing = false;
+    }
+
+    private void SortBy(string sortCategory)
+    {
+        if (_currentSort == sortCategory)
+        {
+            _descending = !_descending;
+        }
+        else
+        {
+            _descending = false;
+            _currentSort = sortCategory;
+        }
+
+        _quiz.Questions = questionService.SortBy(_quiz.Questions, sortCategory, _descending).ToList();
     }
 }

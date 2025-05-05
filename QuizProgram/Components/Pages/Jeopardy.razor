@@ -19,39 +19,39 @@
         </thead>
         <tbody>
             <tr>
-                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
-                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
-                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
-                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
-                <td><p @onclick="()=>ShowQuestion(1)">100</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(1, "Halfblood prince"))">100</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(1, "Hogwarts History"))">100</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(1, "Muggles World"))">100</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(1, "Four Houses of Hogwarts"))">100</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(1, "Random Pipes"))">100</p></td>
             </tr>
             <tr>
-                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
-                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
-                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
-                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
-                <td><p @onclick="()=>ShowQuestion(2)">200</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(2, "Halfblood prince"))">200</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(2, "Hogwarts History"))">200</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(2, "Muggles World"))">200</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(2, "Four Houses of Hogwarts"))">200</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(2, "Random Pipes"))">200</p></td>
             </tr>
             <tr>
-                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
-                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
-                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
-                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
-                <td><p @onclick="()=>ShowQuestion(3)">300</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(3, "Halfblood prince"))">300</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(3, "Hogwarts History"))">300</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(3, "Muggles World"))">300</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(3, "Four Houses of Hogwarts"))">300</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(3, "Random Pipes"))">300</p></td>
             </tr>
             <tr>
-                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
-                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
-                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
-                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
-                <td><p @onclick="()=>ShowQuestion(4)">400</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(4, "Halfblood prince"))">400</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(4, "Hogwarts History"))">400</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(4, "Muggles World"))">400</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(4, "Four Houses of Hogwarts"))">400</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(4, "Random Pipes"))">400</p></td>
             </tr>
             <tr>
-                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
-                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
-                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
-                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
-                <td><p @onclick="()=>ShowQuestion(5)">500</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(5, "Halfblood prince"))">500</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(5, "Hogwarts History"))">500</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(5, "Muggles World"))">500</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(5, "Four Houses of Hogwarts"))">500</p></td>
+                <td><p @onclick="@(()=>ShowQuestion(5, "Random Pipes"))">500</p></td>
             </tr>
         </tbody>
     </table>
@@ -80,10 +80,12 @@
         _quiz = quizContainer.Quiz;
     }
 
-    private async Task ShowQuestion(int difficulty)
+    private async Task ShowQuestion(int difficulty, string category)
     {
         _showVideo = true;
-        _question = _quiz.Questions.FirstOrDefault(q => q.Difficulty == difficulty);
+        _question = _quiz.Questions
+                .FindAll(q => q.Difficulty == difficulty)
+                .FirstOrDefault(q => q.Category == category);
         await Task.Delay(100);
         await JSRuntime.InvokeVoidAsync("playVideo");
         await Task.Delay(2000);

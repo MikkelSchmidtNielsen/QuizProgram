@@ -12,5 +12,6 @@ namespace Domain.Interfaces
         void CreateQuestion(Question question);
         bool DeleteQuestion(Question question);
         bool UpdateQuestion(Question question);
+        IEnumerable<Question> SortBy(IEnumerable<Question> questions, string sortCategory, bool descending);
     }
 }

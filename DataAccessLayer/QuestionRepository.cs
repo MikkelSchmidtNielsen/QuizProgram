@@ -59,6 +59,7 @@ namespace DataAccessLayer
 			if (existingQuestion != null)
 			{
 				existingQuestion.Text = updatedQuestion.Text;
+				existingQuestion.Category = updatedQuestion.Category;
 				existingQuestion.FirstAnswer = updatedQuestion.FirstAnswer;
 				existingQuestion.SecondAnswer = updatedQuestion.SecondAnswer;
 				existingQuestion.ThirdAnswer = updatedQuestion.ThirdAnswer;

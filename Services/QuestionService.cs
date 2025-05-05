@@ -34,5 +34,23 @@ namespace Services
 
             return result;
         }
+
+        public IEnumerable<Question> SortBy(IEnumerable<Question> questions, string sortCategory, bool descending)
+        {
+			var sorted = (sortCategory, descending) switch
+			{
+				("Seconds", false) => questions.OrderBy(q => q.Seconds),
+                ("Seconds", true) => questions.OrderByDescending(q => q.Seconds),
+				("Difficulty", false) => questions.OrderBy(q => q.Difficulty),
+                ("Difficulty", true) => questions.OrderByDescending(q => q.Difficulty),
+                ("Category", false) => questions.OrderBy(q => q.Category)
+                .ThenBy(q => q.Difficulty),
+                ("Category", true) => questions.OrderByDescending(q => q.Category)
+                .ThenBy(q => q.Difficulty),
+				_ => questions
+			};
+
+			return sorted;
+		}
     }
 }

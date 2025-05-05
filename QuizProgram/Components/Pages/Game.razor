@@ -50,6 +50,7 @@
     protected override void OnInitialized()
     {
         _gameState = gameService.SubmitAnswer(0);
+        ShuffleQuestions();
         ShuffleAnswers();
     }
 
@@ -76,7 +77,7 @@
         _answered = true;
 
         var state = gameService.SubmitAnswer(answer);
-        
+
         if (state.ComboCount == 3)
         {
             await jSRuntime.InvokeVoidAsync("playComboSound");
@@ -147,5 +148,11 @@
     private async Task StopAndTranscribe()
     {
         await jSRuntime.InvokeVoidAsync("ToggleMic", false);
+    }
+
+    private void ShuffleQuestions()
+    {
+        Random rng = new Random();
+        _gameState.Quiz.Questions = _gameState.Quiz.Questions.OrderBy(q => rng.Next()).ToList();
     }
 }

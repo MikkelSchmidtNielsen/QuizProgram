@@ -63,3 +63,25 @@ table {
     width: 100%;
     box-sizing: border-box;
 }
+
+th {
+    cursor: pointer;
+}
+
+.sort-arrow {
+    display: inline-block;
+    margin-left: 5px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    transition: transform 0.3s ease;
+}
+
+    .sort-arrow.desc {
+        border-bottom: 8px solid black;
+    }
+
+    .sort-arrow.asc {
+        border-top: 8px solid black;
+    }
