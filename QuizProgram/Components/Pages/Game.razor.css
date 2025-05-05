@@ -70,6 +70,10 @@
         font-family: 'Star Jedi';
     }
 
+.tysk {
+    background: gray;
+}
+
 .center {
     display: flex;
     justify-content: center;
