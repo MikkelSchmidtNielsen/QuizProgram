@@ -54,7 +54,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Quizzes = await quizService.GetAllQuizzes();
+        Quizzes = await quizService.GetAllQuizSummariesAsync();
     }
 
     private async Task CreateQuiz()
@@ -63,16 +63,16 @@
 
         QuizName = char.ToUpper(QuizName[0]) + QuizName.Substring(1).ToLower();
 
-        quizService.CreateQuiz(QuizName);
+        await quizService.CreateQuizAsync(QuizName);
 
-        Quizzes = await quizService.GetAllQuizzes();
+        Quizzes = await quizService.GetAllQuizSummariesAsync();
     }
 
     private async Task DeleteQuiz(Quiz selectedQuiz)
     {
-        quizService.DeleteQuiz(selectedQuiz);
+        await quizService.DeleteQuizAsync(selectedQuiz);
 
-        Quizzes = await quizService.GetAllQuizzes();
+        Quizzes = await quizService.GetAllQuizSummariesAsync();
     }
 
     private void EditQuiz(Quiz selectedQuiz)

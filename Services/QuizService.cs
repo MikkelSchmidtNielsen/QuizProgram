@@ -17,23 +17,25 @@ namespace Services
 			_quizRepository = quizRepository;
 		}
 
-		public void CreateQuiz(string quizName)
+		public async Task CreateQuizAsync(string quizName)
 		{
 			Quiz quiz = new(quizName, new List<Question>());
-			_quizRepository.CreateQuiz(quiz);
+
+			await _quizRepository.CreateQuizAsync(quiz);
 		}
 
-		public Task<List<Quiz>> GetAllQuizzes()
+		public async Task<List<Quiz>> GetAllQuizSummariesAsync()
 		{
-			var quizzes = _quizRepository.GetAllQuizzes();
+			IEnumerable<Quiz> quizzes = await _quizRepository.GetAllQuizSummariesAsync();
+
 			var list = quizzes.ToList();
 
-			return Task.FromResult(list);
+			return list;
 		}
 
-		public bool DeleteQuiz(Quiz selectedQuiz)
+		public async Task<bool> DeleteQuizAsync(Quiz selectedQuiz)
 		{
-			var result = _quizRepository.DeleteQuiz(selectedQuiz);
+			bool result = await _quizRepository.DeleteQuizAsync(selectedQuiz);
 
 			return result;
 		}

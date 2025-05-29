@@ -1,17 +1,10 @@
 import os
 import whisper
 
-def say_hello():
-    return "Hello world! I'm a python script"
+model = whisper.load_model('base')
 
-def test(message):
-    directory = os.getcwd()
-    return message + ": " + directory
+audio_file = 'path'
 
-# model = whisper.load_model('base')
+result = model.transcribe()
 
-# audio_file = 'path'
-
-# result = model.transcribe()
-
-# print(result['text'])
+print(result['text'])

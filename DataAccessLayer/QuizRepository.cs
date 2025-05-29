@@ -18,16 +18,17 @@ namespace DataAccessLayer
 			_db = db;
 		}
 
-		public bool CreateQuiz(Quiz quiz)
+		public async Task<bool> CreateQuizAsync(Quiz quiz)
 		{
 			// Check if the quiz already exist in DB
-			var existingQuiz = _db.Quiz
-				.FirstOrDefault(q => q.QuizName == quiz.QuizName);
+			var existingQuiz = await _db.Quiz
+				.AsNoTracking()
+				.FirstOrDefaultAsync(q => q.QuizName == quiz.QuizName);
 
 			if (existingQuiz == null) // Add to DB
 			{
-				_db.Quiz.Add(quiz);
-				_db.SaveChanges();
+				await _db.Quiz.AddAsync(quiz);
+				await _db.SaveChangesAsync();
 				return true;
 			}
 			else // If hit return and dont add to DB
@@ -36,20 +37,29 @@ namespace DataAccessLayer
 			}
 		}
 
-		public IEnumerable<Quiz> GetAllQuizzes()
+		public async Task<IEnumerable<Quiz>> GetAllQuizSummariesAsync()
 		{
-			var quizzes = _db.Quiz
-				.Include(q => q.Questions)
-				.ToList();
+			var quizzes = await _db.Quiz
+				.AsNoTracking()
+				.ToListAsync();
 
 			return quizzes;
 		}
 
-		public bool DeleteQuiz(Quiz quiz)
+		public async Task<IEnumerable<Question>> GetQuizQuestionsAsync(Quiz quiz)
+		{
+			IEnumerable<Question> questions = await _db.Question
+				.Where(quest => quest.QuizId == quiz.QuizId)
+				.ToListAsync();
+
+			return questions;
+		}
+
+		public async Task<bool> DeleteQuizAsync(Quiz quiz)
 		{
 
-			var quizToRemove = _db.Quiz
-				.FirstOrDefault(q => q.QuizName == quiz.QuizName);
+			var quizToRemove = await _db.Quiz
+				.FirstOrDefaultAsync(q => q.QuizName == quiz.QuizName);
 
 			if (quizToRemove == null)
 			{
@@ -57,7 +67,7 @@ namespace DataAccessLayer
 			}
 
 			_db.Quiz.Remove(quizToRemove);
-			_db.SaveChanges();
+			await _db.SaveChangesAsync();
 
 			return true;
 		}

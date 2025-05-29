@@ -28,7 +28,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Quizzes = await quizService.GetAllQuizzes();
+        Quizzes = await quizService.GetAllQuizSummariesAsync();
     }
 
     public void SelectQuiz(Quiz selectedQuiz)

@@ -9,10 +9,10 @@ namespace Domain.Interfaces
 {
     public interface IQuizService
     {
-        void CreateQuiz(string quizName);
+        Task CreateQuizAsync(string quizName);
 
-        Task<List<Quiz>> GetAllQuizzes();
+        Task<List<Quiz>> GetAllQuizSummariesAsync();
 
-        bool DeleteQuiz(Quiz quiz);
+        Task<bool> DeleteQuizAsync(Quiz quiz);
     }
 }
