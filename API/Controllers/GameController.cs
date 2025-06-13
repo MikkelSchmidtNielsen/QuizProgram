@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
 	[ApiController]
-	[Route("api/controller")]
+	[Route("api/[controller]")]
 	public class GameController : Controller
     {
         private readonly IGameService _gameService;

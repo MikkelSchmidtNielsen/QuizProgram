@@ -59,7 +59,7 @@ namespace DataAccessLayer
 		{
 
 			var quizToRemove = await _db.Quiz
-				.FirstOrDefaultAsync(q => q.QuizName == quiz.QuizName);
+				.FindAsync(quiz.QuizId);
 
 			if (quizToRemove == null)
 			{

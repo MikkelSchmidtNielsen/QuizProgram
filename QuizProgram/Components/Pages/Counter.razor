@@ -33,13 +33,22 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var quiz in Quizzes)
+            @if (Quizzes == null)
             {
                 <tr>
-                    <td>@quiz.QuizName</td>
-                    <td><button @onclick="() => EditQuiz(quiz)">Redigér</button></td>
-                    <td><button @onclick="() => DeleteQuiz(quiz)">Slet</button></td>
+                    <td>Loading...</td>
                 </tr>
+            }
+            else
+            {
+                @foreach (var quiz in Quizzes)
+                {
+                    <tr>
+                        <td>@quiz.QuizName</td>
+                        <td><button @onclick="() => EditQuiz(quiz)">Redigér</button></td>
+                        <td><button @onclick="() => DeleteQuiz(quiz)">Slet</button></td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
@@ -49,16 +58,32 @@
 @code {
     private int currentCount = 0;
     private List<Quiz> Quizzes { get; set; } = new();
-    private string QuizName { get; set; } = null!;
+    private string QuizName { get; set; }
     private bool _isSelected;
 
     protected override async Task OnInitializedAsync()
     {
-        Quizzes = await quizService.GetAllQuizSummariesAsync();
+        // fire‐and‐forget on a thread‐pool thread
+        _ = Task.Run(async () =>
+        {
+            var list = await quizService.GetAllQuizSummariesAsync();
+
+            // back to Blazor’s sync context to update state
+            await InvokeAsync(() =>
+            {
+                Quizzes = list;
+                StateHasChanged();
+            });
+        });
     }
 
     private async Task CreateQuiz()
     {
+        if (QuizName == null)
+        {
+            return;
+        }
+
         QuizName = Regex.Replace(QuizName.Trim(), @"\s+", " "); // Removes whitespaces before, between and after input
 
         QuizName = char.ToUpper(QuizName[0]) + QuizName.Substring(1).ToLower();
