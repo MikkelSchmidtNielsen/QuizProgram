@@ -13,6 +13,8 @@ namespace Domain.Interfaces
 
         Task<IEnumerable<Quiz>> GetAllQuizSummariesAsync();
 
-        Task<bool> DeleteQuizAsync(Quiz quiz);
+        Task<Quiz> GetQuizQuestionsAsync(Quiz quiz);
+
+		Task<bool> DeleteQuizAsync(Quiz quiz);
     }
 }

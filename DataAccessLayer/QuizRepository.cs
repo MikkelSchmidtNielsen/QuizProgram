@@ -46,13 +46,14 @@ namespace DataAccessLayer
 			return quizzes;
 		}
 
-		public async Task<IEnumerable<Question>> GetQuizQuestionsAsync(Quiz quiz)
+		public async Task<Quiz> GetQuizQuestionsAsync(Quiz quiz)
 		{
-			IEnumerable<Question> questions = await _db.Question
+			Quiz quizWithQuest = await _db.Quiz
 				.Where(quest => quest.QuizId == quiz.QuizId)
-				.ToListAsync();
+				.Include(q => q.Questions)
+				.SingleAsync();
 
-			return questions;
+			return quizWithQuest;
 		}
 
 		public async Task<bool> DeleteQuizAsync(Quiz quiz)

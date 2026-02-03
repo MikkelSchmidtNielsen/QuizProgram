@@ -33,6 +33,13 @@ namespace Services
 			return list;
 		}
 
+		public async Task<Quiz> GetQuizQuestionsAsync(Quiz quiz)
+		{
+			Quiz quizWithQuest = await _quizRepository.GetQuizQuestionsAsync(quiz);
+
+			return quizWithQuest;
+		}
+
 		public async Task<bool> DeleteQuizAsync(Quiz selectedQuiz)
 		{
 			bool result = await _quizRepository.DeleteQuizAsync(selectedQuiz);
