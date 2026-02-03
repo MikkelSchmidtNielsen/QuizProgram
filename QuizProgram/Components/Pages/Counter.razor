@@ -57,22 +57,19 @@
 
 @code {
     private int currentCount = 0;
-    private List<Quiz> Quizzes { get; set; } = new();
+    private List<Quiz> Quizzes { get; set; }
     private string QuizName { get; set; }
     private bool _isSelected;
 
     protected override async Task OnInitializedAsync()
     {
-        // fire‐and‐forget on a thread‐pool thread
         _ = Task.Run(async () =>
         {
             var list = await quizService.GetAllQuizSummariesAsync();
 
-            // back to Blazor’s sync context to update state
             await InvokeAsync(() =>
             {
                 Quizzes = list;
-                StateHasChanged();
             });
         });
     }
