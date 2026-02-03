@@ -6,7 +6,7 @@
 @inject IJSRuntime JSRuntime
 
 <div class="bg-video">
-    <video id="bgVideo" autoplay muted playsinline preload="auto">
+    <video id="bgVideo" autoplay muted playsinline loop preload="auto">
         <source src="video/wallpaper.mp4" type="video/mp4" />
     </video>
 </div>
@@ -121,10 +121,11 @@
             <source src="video/book.mp4" type="video/mp4" />
         </video>
 
-        <!-- This stops clicks on the UI from closing -->
         <div class="overlay-text @textClass" @onclick:stopPropagation="true">
             <h2>@_question.Text</h2>
+        </div>
 
+        <div class="award-wrapper" @onclick:stopPropagation="true">
             <div class="award-panel">
                 <div class="award-title">Award @CurrentQuestionPoints points</div>
 
@@ -165,26 +166,24 @@
                 @foreach (var col in HouseCupColumns())
                 {
                     <div class="tube @col.Css"
-                         style="--from:@col.FromPct%; --to:@col.ToPct%;"
                          data-delta="@col.Delta"
                          data-points="@col.To">
 
-                        <div class="tube-frame">
-                            <div class="tube-glass">
-                                <div class="diamond-layer"></div>
-                                <div class="tube-highlight"></div>
-                            </div>
+                        <div class="tube-frame"></div>
 
-                            <div class="tube-cap top"></div>
-                            <div class="tube-cap bottom"></div>
+                        <div class="tube-glass">
+                            <div class="diamond-layer"></div>
+                            <div class="tube-highlight"></div>
+                        </div>
 
-                            <div class="tube-badge">
-                                <div class="tube-house">@col.Label</div>
-                                <div class="tube-score">@col.To</div>
-                            </div>
+                        <div class="tube-cap top"></div>
+                        <div class="tube-cap bottom"></div>
+
+                        <div class="tube-badge">
+                            <div class="tube-house">@col.Label</div>
+                            <div class="tube-score">@col.To</div>
                         </div>
                     </div>
-
                 }
             </div>
             <div class="housecup-actions">
@@ -203,7 +202,6 @@
     private string textClass = string.Empty;
 
     private readonly HashSet<string> _answered = new();
-
     private static string TileKey(int difficulty, string category) => $"{category}::{difficulty}";
 
     private enum House { Gryffindor, Slytherin, Ravenclaw, Hufflepuff }
@@ -234,8 +232,9 @@
     private Dictionary<House, int> _prevPoints = new();
     private Dictionary<House, int> _nextPoints = new();
 
+    // --- FIX IS HERE: Multiplied by 100 to convert difficulty (1-5) to points (100-500) ---
     private int CurrentQuestionPoints =>
-        _question is null ? 0 : _question.Difficulty * 100; // matches your 100..500 grid
+        _question is null ? 0 : _question.Difficulty * 100;
 
     private void ResetTicks()
     {
@@ -248,12 +247,12 @@
     private async Task AwardPointsAsync()
     {
         if (_question is null) return;
-
         MarkAnswered();
 
         _prevPoints = _housePoints.ToDictionary(k => k.Key, v => v.Value);
 
         var points = CurrentQuestionPoints;
+
         foreach (var house in _awardTicks.Where(x => x.Value).Select(x => x.Key))
             _housePoints[house] += points;
 
@@ -266,9 +265,6 @@
         await JSRuntime.InvokeVoidAsync("houseCupAnimate");
         await JSRuntime.InvokeVoidAsync("houseCupDiamonds");
 
-
-        // DO NOT auto-close anymore
-        // DO NOT close question overlay here if you want the user to stay focused on House Cup
         _showVideo = false;
         textClass = string.Empty;
         ResetTicks();
@@ -289,11 +285,9 @@
         _quiz = await quizService.GetQuizQuestionsAsync(_quiz);
         _prevPoints = _housePoints.ToDictionary(x => x.Key, x => x.Value);
         _nextPoints = _housePoints.ToDictionary(x => x.Key, x => x.Value);
-
     }
 
     private record TubeCol(string Css, string Label, int FromPct, int ToPct, int To, int Delta);
-
 
     private IEnumerable<TubeCol> HouseCupColumns()
     {
@@ -315,8 +309,6 @@
         yield return Make(House.Ravenclaw, "Ravenclaw", "raven");
         yield return Make(House.Hufflepuff, "Hufflepuff", "huff");
     }
-
-
 
     private async Task ShowQuestion(int difficulty, string category)
     {
@@ -354,78 +346,9 @@
         await ShowQuestion(difficulty, category);
     }
 
-    // Call this when the user answers the question (correct or wrong)
     private void MarkAnswered()
     {
         if (_question is null) return;
         _answered.Add(TileKey(_question.Difficulty, _question.Category));
     }
-
-    private RenderFragment HouseCupColumn(House house, string label, int from, int to) => builder =>
-    {
-    var max = Math.Max(1, _nextPoints.Values.DefaultIfEmpty(1).Max());
-    var fromPct = (int)Math.Round((from / (double)max) * 100);
-    var toPct = (int)Math.Round((to / (double)max) * 100);
-
-    var cssClass = house switch
-    {
-        House.Gryffindor => "tube gryff",
-        House.Slytherin => "tube slyth",
-        House.Ravenclaw => "tube raven",
-        House.Hufflepuff => "tube huff",
-        _ => "tube"
-    };
-
-    builder.OpenElement(0, "div");
-    builder.AddAttribute(1, "class", cssClass);
-    builder.AddAttribute(2, "style", $"--from:{fromPct}%; --to:{toPct}%;");
-
-    builder.OpenElement(3, "div");
-    builder.AddAttribute(4, "class", "tube-rank");
-    builder.CloseElement();
-
-    builder.OpenElement(5, "div");
-    builder.AddAttribute(6, "class", "tube-frame");
-
-    builder.OpenElement(7, "div");
-    builder.AddAttribute(8, "class", "tube-glass");
-
-    builder.OpenElement(9, "div");
-    builder.AddAttribute(10, "class", "tube-liquid");
-    builder.CloseElement();
-
-    builder.OpenElement(11, "div");
-    builder.AddAttribute(12, "class", "tube-highlight");
-    builder.CloseElement();
-
-    builder.CloseElement(); // tube-glass
-
-    builder.OpenElement(13, "div");
-    builder.AddAttribute(14, "class", "tube-cap top");
-    builder.CloseElement();
-
-    builder.OpenElement(15, "div");
-    builder.AddAttribute(16, "class", "tube-cap bottom");
-    builder.CloseElement();
-
-    builder.OpenElement(17, "div");
-    builder.AddAttribute(18, "class", "tube-badge");
-
-    builder.OpenElement(19, "div");
-    builder.AddAttribute(20, "class", "tube-house");
-    builder.AddContent(21, label);
-    builder.CloseElement();
-
-    builder.OpenElement(22, "div");
-    builder.AddAttribute(23, "class", "tube-score");
-    builder.AddContent(24, to);
-    builder.CloseElement();
-
-    builder.CloseElement(); // tube-badge
-
-    builder.CloseElement(); // tube-frame
-    builder.CloseElement(); // tube
-    };
-
-
 }
