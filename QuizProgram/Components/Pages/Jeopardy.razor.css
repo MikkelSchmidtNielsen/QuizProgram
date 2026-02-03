@@ -1,12 +1,12 @@
-﻿:deep(body) {
+﻿body {
     margin: 0;
     color: #f6e39a;
     background: radial-gradient(1200px 700px at 20% 10%, rgba(178,225,255,.16), transparent 60%), radial-gradient(900px 650px at 85% 15%, rgba(255,224,160,.10), transparent 60%), radial-gradient(900px 700px at 60% 90%, rgba(125,185,255,.10), transparent 60%), linear-gradient(180deg, #050912 0%, #070a14 35%, #040611 100%);
     overflow-x: hidden;
 }
 
-    /* subtle floating sparkles */
-    :deep(body)::before {
+    /* Sparkles effect */
+    body::before {
         content: "";
         position: fixed;
         inset: -20vh -20vw;
@@ -18,7 +18,6 @@
         animation: hp-drift 14s linear infinite;
         z-index: 0;
     }
-
 
 @keyframes hp-drift {
     0% {
@@ -37,7 +36,7 @@ h1 {
     display: flex;
     justify-content: center;
     margin: 28px 0 18px;
-    font-family: 'Harry P';
+    font-family: 'Harry P', serif; /* Added fallback */
     font-size: clamp(26px, 3.1vw, 46px);
     letter-spacing: .06em;
     color: #f6e39a;
@@ -62,7 +61,7 @@ table {
 
 /* --------- CATEGORY HEADERS --------- */
 thead {
-    font-family: 'Animales Fantastic';
+    font-family: 'Animales Fantastic', serif;
     text-align: center;
     color: rgba(246,227,154,.92);
 }
@@ -101,35 +100,11 @@ tbody td {
     transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
 }
 
-    tbody td::before {
-        content: "";
-        position: absolute;
-        inset: -2px;
-        border-radius: 20px;
-        background: conic-gradient(from 180deg, rgba(255,225,160,.00), rgba(255,225,160,.18), rgba(140,210,255,.16), rgba(255,225,160,.18), rgba(255,225,160,.00));
-        opacity: 0;
-        filter: blur(6px);
-        transition: opacity .16s ease;
-        pointer-events: none;
-    }
-
-    tbody td::after {
-        content: "";
-        position: absolute;
-        inset: -40% -60%;
-        background: linear-gradient(110deg, transparent 35%, rgba(246,227,154,.20) 45%, rgba(184,212,255,.18) 52%, transparent 62%);
-        transform: translateX(-35%) rotate(10deg);
-        opacity: .65;
-        transition: transform .30s ease, opacity .20s ease;
-        mix-blend-mode: screen;
-        pointer-events: none;
-    }
-
     tbody td > p {
         margin: 0;
         padding: 28px 10px;
         text-align: center;
-        font-family: InkPot;
+        font-family: InkPot, serif;
         font-size: 42px;
         font-weight: 800;
         letter-spacing: .03em;
@@ -145,183 +120,11 @@ tbody td {
         box-shadow: 0 24px 48px rgba(0,0,0,.55), 0 0 24px rgba(140,210,255,.16), 0 0 18px rgba(246,227,154,.10), inset 0 1px 0 rgba(255,255,255,.08);
     }
 
-        tbody td:hover::before {
-            opacity: .85;
-        }
-
-        tbody td:hover::after {
-            transform: translateX(10%) rotate(10deg);
-        }
-
-    tbody td:active {
-        transform: translateY(0px) scale(1.005);
-        box-shadow: 0 16px 30px rgba(0,0,0,.50), inset 0 2px 10px rgba(0,0,0,.35);
-    }
-
-    tbody td:focus-within {
-        outline: 2px solid rgba(184,212,255,.70);
-        outline-offset: 3px;
-    }
-
-/* --------- QUESTION OVERLAY --------- */
-h2 {
-    font-family: InkPot;
-    color: #1C1C1C;
-}
-
-.video-container {
+/* --------- HOUSE CUP STYLES (Cleaned up) --------- */
+.housecup-overlay {
     position: fixed;
     inset: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 10;
-}
-
-.fullscreen-video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 1;
-}
-
-.overlay-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotateX(35deg);
-    color: white;
-    font-size: 6rem;
-    font-weight: bold;
-    z-index: 2;
-    text-align: center;
-    opacity: 0;
-    transition: opacity 2s ease-in;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-}
-
-.fade-in-text {
-    opacity: 1;
-}
-
-.bg-video {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-}
-
-    .bg-video video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: brightness(.55) contrast(1.05);
-    }
-
-/* Make your UI sit above the wallpaper */
-.table-container, h1 {
-    position: relative;
-    z-index: 1;
-}
-
-/* --------- SMALL SCREENS --------- */
-@media (max-width: 900px) {
-    table {
-        border-spacing: 10px;
-    }
-
-    tbody td > p {
-        font-size: 34px;
-        padding: 22px 8px;
-    }
-
-    thead td {
-        font-size: 12px;
-    }
-}
-
-/* answered tile: grey + no interaction */
-.tile-answered {
-    filter: grayscale(1) brightness(.75);
-    opacity: .55;
-    cursor: default;
-}
-
-    .tile-answered > p {
-        pointer-events: none;
-    }
-
-    .tile-answered::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: linear-gradient(135deg, transparent 0 45%, rgba(255,255,255,.18) 45% 46%, rgba(0,0,0,.65) 46% 47%, rgba(255,255,255,.10) 47% 48%, transparent 48% 100%), linear-gradient(40deg, transparent 0 52%, rgba(255,255,255,.14) 52% 52.8%, rgba(0,0,0,.55) 52.8% 53.6%, transparent 53.6% 100%);
-        mix-blend-mode: screen;
-        opacity: .9;
-    }
-
-/* award panel */
-.award-panel {
-    margin-top: 18px;
-    display: grid;
-    gap: 10px;
-    justify-items: center;
-}
-
-.award-title {
-    font-family: 'Animales Fantastic';
-    color: rgba(246,227,154,.95);
-    font-size: 18px;
-    letter-spacing: .06em;
-}
-
-.house-tick {
-    width: min(520px, 92vw);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(246,227,154,.22);
-    background: linear-gradient(180deg, rgba(10,16,34,.55), rgba(4,6,17,.62));
-    color: rgba(255,255,255,.92);
-    font-family: InkPot;
-    font-size: 18px;
-}
-
-    .house-tick input {
-        width: 18px;
-        height: 18px;
-        accent-color: rgba(246,227,154,.9);
-    }
-
-.award-btn {
-    margin-top: 8px;
-    padding: 10px 16px;
-    border-radius: 14px;
-    border: 1px solid rgba(246,227,154,.35);
-    background: linear-gradient(180deg, rgba(246,227,154,.18), rgba(140,210,255,.10));
-    color: rgba(255,255,255,.92);
-    font-family: 'Animales Fantastic';
-    letter-spacing: .06em;
-    cursor: pointer;
-}
-
-    .award-btn:hover {
-        transform: translateY(-1px);
-    }
-
-    .award-btn:active {
-        transform: translateY(0);
-    }
-
-/* --------- HOUSE CUP (SCOPED, DIAMONDS) --------- */
-:deep(.housecup-overlay) {
-    position: fixed;
-    inset: 0;
-    z-index: 20;
+    z-index: 20; /* High z-index to show above everything */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -329,7 +132,7 @@ h2 {
     backdrop-filter: blur(3px);
 }
 
-:deep(.housecup-card) {
+.housecup-card {
     width: min(980px, 94vw);
     padding: 18px 18px 22px;
     border-radius: 22px;
@@ -338,9 +141,9 @@ h2 {
     box-shadow: 0 30px 80px rgba(0,0,0,.7);
 }
 
-:deep(.housecup-title) {
+.housecup-title {
     text-align: center;
-    font-family: 'Harry P';
+    font-family: 'Harry P', serif;
     font-size: 40px;
     color: #f6e39a;
     letter-spacing: .06em;
@@ -348,20 +151,20 @@ h2 {
     text-shadow: 0 0 18px rgba(140,210,255,.16);
 }
 
-:deep(.cups) {
+.cups {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 18px;
     align-items: end;
 }
 
-:deep(.tube) {
+.tube {
     display: grid;
     justify-items: center;
     gap: 10px;
 }
 
-:deep(.tube-frame) {
+.tube-frame {
     position: relative;
     width: min(220px, 22vw);
     padding: 22px 18px 18px;
@@ -371,23 +174,21 @@ h2 {
     box-shadow: 0 24px 70px rgba(0,0,0,.65);
 }
 
-:deep(.tube-glass) {
+.tube-glass {
     position: relative;
     height: 320px;
     border-radius: 28px;
     overflow: hidden;
     border: 2px solid rgba(255,255,255,.35);
-    background: radial-gradient(140% 70% at 50% 0%, rgba(255,255,255,.18), transparent 60%),
-                linear-gradient(180deg, rgba(255,255,255,.10), rgba(0,0,0,.40));
-    box-shadow: inset 0 0 0 2px rgba(0,0,0,.22),
-                inset 0 -18px 30px rgba(0,0,0,.34);
+    background: radial-gradient(140% 70% at 50% 0%, rgba(255,255,255,.18), transparent 60%), linear-gradient(180deg, rgba(255,255,255,.10), rgba(0,0,0,.40));
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,.22), inset 0 -18px 30px rgba(0,0,0,.34);
 }
 
-/* we are not using bars anymore */
-:deep(.tube-liquid) { display: none !important; }
+.tube-liquid {
+    display: none !important;
+}
 
-/* glass highlight strip */
-:deep(.tube-highlight) {
+.tube-highlight {
     position: absolute;
     top: -20%;
     bottom: -20%;
@@ -401,25 +202,29 @@ h2 {
     z-index: 6;
 }
 
-/* caps (metal rings) */
-:deep(.tube-cap) {
+.tube-cap {
     position: absolute;
     left: 50%;
     width: 76%;
     height: 22px;
     transform: translateX(-50%);
     border-radius: 999px;
-    background: linear-gradient(180deg, rgba(246,227,154,.55), rgba(217,179,95,.22)),
-                radial-gradient(circle at 30% 30%, rgba(255,255,255,.28), transparent 60%);
+    background: linear-gradient(180deg, rgba(246,227,154,.55), rgba(217,179,95,.22)), radial-gradient(circle at 30% 30%, rgba(255,255,255,.28), transparent 60%);
     border: 1px solid rgba(246,227,154,.32);
     box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    z-index: 8;
 }
 
-:deep(.tube-cap.top) { top: 16px; }
-:deep(.tube-cap.bottom) { bottom: 88px; }
+    .tube-cap.top {
+        top: 16px;
+    }
 
-/* badge area */
-:deep(.tube-badge) {
+    .tube-cap.bottom {
+        top: 308px; /* Fixed position relative to glass top */
+        bottom: auto;
+    }
+
+.tube-badge {
     margin-top: 12px;
     padding: 10px 10px 12px;
     border-radius: 16px;
@@ -429,22 +234,22 @@ h2 {
     text-align: center;
 }
 
-:deep(.tube-house) {
-    font-family: 'Animales Fantastic';
-    color: rgba(246,227,154,.92);
+.tube-house {
+    font-family: 'Animales Fantastic', serif;
+    color: rgba(246,227,154,.92); /* This was likely broken before */
     font-size: 14px;
     letter-spacing: .06em;
     margin-bottom: 4px;
 }
 
-:deep(.tube-score) {
-    font-family: InkPot;
-    color: rgba(255,255,255,.92);
+.tube-score {
+    font-family: InkPot, serif;
+    color: rgba(255,255,255,.92); /* This was likely broken before */
     font-size: 22px;
 }
 
-/* ---------- DIAMONDS ---------- */
-:deep(.diamond-layer) {
+/* Diamonds */
+.diamond-layer {
     position: absolute;
     inset: 0;
     overflow: hidden;
@@ -452,88 +257,42 @@ h2 {
     z-index: 5;
 }
 
-:deep(.diamond) {
+.diamond {
     position: absolute;
     width: 18px;
     height: 18px;
     border-radius: 3px;
     transform: rotate(45deg);
-    background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.92), rgba(255,255,255,.18) 45%, rgba(255,255,255,.05) 70%),
-        linear-gradient(135deg, rgba(255,255,255,.12), rgba(0,0,0,.35));
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.92), rgba(255,255,255,.18) 45%, rgba(255,255,255,.05) 70%), linear-gradient(135deg, rgba(255,255,255,.12), rgba(0,0,0,.35));
     box-shadow: 0 8px 18px rgba(0,0,0,.45);
     animation: diamond-fall 900ms cubic-bezier(.2,.9,.2,1) forwards;
 }
 
-:deep(.diamond-text) {
+.diamond-text {
     position: absolute;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     transform: rotate(-45deg) scale(.55);
-    font-family: InkPot;
+    font-family: InkPot, serif;
     color: rgba(246,227,154,.98);
     text-shadow: 0 1px 2px rgba(0,0,0,.8);
     white-space: nowrap;
 }
 
 @keyframes diamond-fall {
-    0%   { transform: translateY(0) rotate(45deg); opacity: 0; }
-    10%  { opacity: 1; }
-    100% { transform: translateY(var(--finalY)) rotate(45deg); opacity: 1; }
-}
+    0% {
+        transform: translateY(0) rotate(45deg);
+        opacity: 0;
+    }
 
-/* mobile */
-@media (max-width: 900px) {
-    :deep(.tube-frame) { width: 44vw; }
-    :deep(.tube-glass) { height: 240px; }
-    :deep(.tube-cap.bottom) { bottom: 78px; }
-}
+    10% {
+        opacity: 1;
+    }
 
-:deep(.diamond-layer) {
-    z-index: 7;
-}
-
-:deep(.tube-highlight) {
-    z-index: 8;
-}
-
-/* wallpaper must always be the bottom layer */
-:deep(.bg-video) {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none; /* important */
-}
-
-:deep(.bg-video video) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* board sits above wallpaper */
-:deep(.table-container), :deep(h1) {
-    position: relative;
-    z-index: 1;
-}
-
-/* question overlay above board */
-:deep(.video-container) {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-}
-
-/* house cup must be the top-most layer */
-:deep(.housecup-overlay) {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-}
-
-/* prevent page scroll when any overlay is open */
-:deep(body) {
-    overflow: hidden;
+    100% {
+        transform: translateY(var(--finalY)) rotate(45deg);
+        opacity: 1;
+    }
 }
