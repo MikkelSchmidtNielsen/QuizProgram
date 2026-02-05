@@ -1,204 +1,228 @@
 ﻿@page "/jeopardy"
+@implements IDisposable
 @rendermode InteractiveServer
 @inject IQuizContainer quizContainer
 @inject IQuizService quizService
 @inject IGameService gameService
 @inject IJSRuntime JSRuntime
 
-<div class="bg-video">
-    <video id="bgVideo" autoplay muted playsinline loop preload="auto">
-        <source src="video/wallpaper.mp4" type="video/mp4" />
-    </video>
-</div>
+<div class="jeopardy-board" id="jeopardy-board">
 
-<h1>@_quiz.QuizName</h1>
+    <audio id="rulesAudio" preload="auto">
+        <source src="audio/rules.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="thanksAudio" preload="auto">
+        <source src="audio/thanks.mp3" type="audio/mpeg" />
+    </audio>
 
-<div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <td width="250">Halfblood prince</td>
-                <td width="250">Hogwarts History</td>
-                <td width="250">Muggles World</td>
-                <td width="250">Four Houses of Hogwarts</td>
-                <td width="250">Random Pipes</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="@GetTileTdClass(1, "Halfblood prince")">
-                    <p @onclick="@(() => OnTileClick(1, "Halfblood prince"))">100</p>
-                </td>
-                <td class="@GetTileTdClass(1, "Hogwarts History")">
-                    <p @onclick="@(() => OnTileClick(1, "Hogwarts History"))">100</p>
-                </td>
-                <td class="@GetTileTdClass(1, "Muggles World")">
-                    <p @onclick="@(() => OnTileClick(1, "Muggles World"))">100</p>
-                </td>
-                <td class="@GetTileTdClass(1, "Four Houses of Hogwarts")">
-                    <p @onclick="@(() => OnTileClick(1, "Four Houses of Hogwarts"))">100</p>
-                </td>
-                <td class="@GetTileTdClass(1, "Random Pipes")">
-                    <p @onclick="@(() => OnTileClick(1, "Random Pipes"))">100</p>
-                </td>
-            </tr>
-            <tr>
-                <td class="@GetTileTdClass(2, "Halfblood prince")">
-                    <p @onclick="@(() => OnTileClick(2, "Halfblood prince"))">200</p>
-                </td>
-                <td class="@GetTileTdClass(2, "Hogwarts History")">
-                    <p @onclick="@(() => OnTileClick(2, "Hogwarts History"))">200</p>
-                </td>
-                <td class="@GetTileTdClass(2, "Muggles World")">
-                    <p @onclick="@(() => OnTileClick(2, "Muggles World"))">200</p>
-                </td>
-                <td class="@GetTileTdClass(2, "Four Houses of Hogwarts")">
-                    <p @onclick="@(() => OnTileClick(2, "Four Houses of Hogwarts"))">200</p>
-                </td>
-                <td class="@GetTileTdClass(2, "Random Pipes")">
-                    <p @onclick="@(() => OnTileClick(2, "Random Pipes"))">200</p>
-                </td>
-            </tr>
-            <tr>
-                <td class="@GetTileTdClass(3, "Halfblood prince")">
-                    <p @onclick="@(() => OnTileClick(3, "Halfblood prince"))">300</p>
-                </td>
-                <td class="@GetTileTdClass(3, "Hogwarts History")">
-                    <p @onclick="@(() => OnTileClick(3, "Hogwarts History"))">300</p>
-                </td>
-                <td class="@GetTileTdClass(3, "Muggles World")">
-                    <p @onclick="@(() => OnTileClick(3, "Muggles World"))">300</p>
-                </td>
-                <td class="@GetTileTdClass(3, "Four Houses of Hogwarts")">
-                    <p @onclick="@(() => OnTileClick(3, "Four Houses of Hogwarts"))">300</p>
-                </td>
-                <td class="@GetTileTdClass(3, "Random Pipes")">
-                    <p @onclick="@(() => OnTileClick(3, "Random Pipes"))">300</p>
-                </td>
-            </tr>
-            <tr>
-                <td class="@GetTileTdClass(4, "Halfblood prince")">
-                    <p @onclick="@(() => OnTileClick(4, "Halfblood prince"))">400</p>
-                </td>
-                <td class="@GetTileTdClass(4, "Hogwarts History")">
-                    <p @onclick="@(() => OnTileClick(4, "Hogwarts History"))">400</p>
-                </td>
-                <td class="@GetTileTdClass(4, "Muggles World")">
-                    <p @onclick="@(() => OnTileClick(4, "Muggles World"))">400</p>
-                </td>
-                <td class="@GetTileTdClass(4, "Four Houses of Hogwarts")">
-                    <p @onclick="@(() => OnTileClick(4, "Four Houses of Hogwarts"))">400</p>
-                </td>
-                <td class="@GetTileTdClass(4, "Random Pipes")">
-                    <p @onclick="@(() => OnTileClick(4, "Random Pipes"))">400</p>
-                </td>
-            </tr>
-            <tr>
-                <td class="@GetTileTdClass(5, "Halfblood prince")">
-                    <p @onclick="@(() => OnTileClick(5, "Halfblood prince"))">500</p>
-                </td>
-                <td class="@GetTileTdClass(5, "Hogwarts History")">
-                    <p @onclick="@(() => OnTileClick(5, "Hogwarts History"))">500</p>
-                </td>
-                <td class="@GetTileTdClass(5, "Muggles World")">
-                    <p @onclick="@(() => OnTileClick(5, "Muggles World"))">500</p>
-                </td>
-                <td class="@GetTileTdClass(5, "Four Houses of Hogwarts")">
-                    <p @onclick="@(() => OnTileClick(5, "Four Houses of Hogwarts"))">500</p>
-                </td>
-                <td class="@GetTileTdClass(5, "Random Pipes")">
-                    <p @onclick="@(() => OnTileClick(5, "Random Pipes"))">500</p>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-@if (_showVideo)
-{
-    <div class="video-container" @onclick="HideQuestion">
-        <video id="bookVideo" class="fullscreen-video" autoplay muted playsinline>
-            <source src="video/book.mp4" type="video/mp4" />
+    <div class="bg-video">
+        <video id="bgVideo1" class="bg-layer active" autoplay muted playsinline preload="auto">
+            <source src="video/wallpaper.mp4" type="video/mp4" />
         </video>
-
-        <div class="overlay-text @textClass" @onclick:stopPropagation="true">
-            <h2>@_question.Text</h2>
-        </div>
-
-        <div class="award-wrapper" @onclick:stopPropagation="true">
-            <div class="award-panel">
-                <div class="award-title">Award @CurrentQuestionPoints points</div>
-
-                <label class="house-tick gryff">
-                    <input type="checkbox" @bind="_awardTicks[House.Gryffindor]" />
-                    Gryffindor
-                </label>
-
-                <label class="house-tick slyth">
-                    <input type="checkbox" @bind="_awardTicks[House.Slytherin]" />
-                    Slytherin
-                </label>
-
-                <label class="house-tick raven">
-                    <input type="checkbox" @bind="_awardTicks[House.Ravenclaw]" />
-                    Ravenclaw
-                </label>
-
-                <label class="house-tick huff">
-                    <input type="checkbox" @bind="_awardTicks[House.Hufflepuff]" />
-                    Hufflepuff
-                </label>
-
-                <button class="award-btn" @onclick="AwardPointsAsync">Award points</button>
-            </div>
-        </div>
+        <video id="bgVideo2" class="bg-layer" muted playsinline preload="auto">
+            <source src="video/wallpaper.mp4" type="video/mp4" />
+        </video>
     </div>
-}
 
+    <h1>Potter 'n' Pipes</h1>
 
-@if (_showHouseCup)
-{
-    <div class="housecup-overlay">
-        <div class="housecup-card">
-            <div class="housecup-title">House Cup</div>
-
-            <div class="cups">
-                @foreach (var col in HouseCupColumns())
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <td width="250">Halfblood prince</td>
+                    <td width="250">Hogwarts History</td>
+                    <td width="250">Muggles World</td>
+                    <td width="250">Four Houses of Hogwarts</td>
+                    <td width="250">Random Pipes</td>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 1; i <= 5; i++)
                 {
-                    <div class="tube @col.Css"
-                         data-delta="@col.Delta"
-                         data-points="@col.To">
-
-                        <div class="tube-frame"></div>
-
-                        <div class="tube-glass">
-                            <div class="diamond-layer"></div>
-                            <div class="tube-highlight"></div>
-                        </div>
-
-                        <div class="tube-cap top"></div>
-                        <div class="tube-cap bottom"></div>
-
-                        <div class="tube-badge">
-                            <div class="tube-house">@col.Label</div>
-                            <div class="tube-score">@col.To</div>
-                        </div>
-                    </div>
+                    <tr>
+                        <td class="@GetTileTdClass(i, "Halfblood prince")">
+                            <p @onclick="@(() => OnTileClick(i, "Halfblood prince"))">@(i * 100)</p>
+                        </td>
+                        <td class="@GetTileTdClass(i, "Hogwarts History")">
+                            <p @onclick="@(() => OnTileClick(i, "Hogwarts History"))">@(i * 100)</p>
+                        </td>
+                        <td class="@GetTileTdClass(i, "Muggles World")">
+                            <p @onclick="@(() => OnTileClick(i, "Muggles World"))">@(i * 100)</p>
+                        </td>
+                        <td class="@GetTileTdClass(i, "Four Houses of Hogwarts")">
+                            <p @onclick="@(() => OnTileClick(i, "Four Houses of Hogwarts"))">@(i * 100)</p>
+                        </td>
+                        <td class="@GetTileTdClass(i, "Random Pipes")">
+                            <p @onclick="@(() => OnTileClick(i, "Random Pipes"))">@(i * 100)</p>
+                        </td>
+                    </tr>
                 }
-            </div>
-            <div class="housecup-actions">
-                <button class="housecup-next" @onclick="CloseHouseCup">Tag mig tilbage til Hogwarts!</button>
+            </tbody>
+        </table>
+    </div>
+
+    @if (_showVideo)
+    {
+        <div class="video-container" @onclick="HideQuestion">
+            <video id="bookVideo" class="fullscreen-video" autoplay muted playsinline>
+                <source src="video/book.mp4" type="video/mp4" />
+            </video>
+
+            <div class="overlay-text @textClass" @onclick:stopPropagation="true">
+                <h2>@_question.Text</h2>
             </div>
 
+            <div class="expelliarmus-wrapper" @onclick:stopPropagation="true">
+                <div class="expelliarmus-panel">
+                    @if (_castingHouse == null)
+                    {
+                        <div class="expelliarmus-header">Expelliarmus</div>
+                        <div class="expelliarmus-list">
+                            @foreach (var house in Enum.GetValues<House>())
+                            {
+                                var isUsed = _expelliarmusUsed[house];
+                                <button class="expelliarmus-btn @GetHouseCss(house) @(isUsed ? "used" : "")" 
+                                        @onclick="() => PrepareExpelliarmus(house)"
+                                        disabled="@isUsed">
+                                    <img src="/images/@(GetHouseCss(house)).png" class="mini-crest" />
+                                    <span>@house</span>
+                                    @if(isUsed) { <span class="used-mark">Used</span> }
+                                </button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="expelliarmus-header">@_castingHouse Casts On...</div>
+                        <div class="expelliarmus-list">
+                            @foreach (var target in Enum.GetValues<House>())
+                            {
+                                if (target != _castingHouse)
+                                {
+                                    <button class="expelliarmus-btn target @GetHouseCss(target)" 
+                                            @onclick="() => CastExpelliarmus(target)">
+                                        <img src="/images/@(GetHouseCss(target)).png" class="mini-crest" />
+                                        <span>@target</span>
+                                    </button>
+                                }
+                            }
+                        </div>
+                        <button class="regret-btn" @onclick="CancelExpelliarmus">Regret (Cancel)</button>
+                    }
+                </div>
+            </div>
+
+            <div class="award-wrapper" @onclick:stopPropagation="true">
+                <div class="award-panel">
+                    <div class="award-title">Award @CurrentQuestionPoints points</div>
+
+                    @foreach (var house in Enum.GetValues<House>())
+                    {
+                        var isBlocked = IsBlocked(house);
+                        
+                        <label class="house-tick @GetHouseCss(house) @(isBlocked ? "blocked" : "")">
+                            @if (!isBlocked)
+                            {
+                                <input type="checkbox" @bind="_awardTicks[house]" />
+                            }
+                            else 
+                            {
+                                <input type="checkbox" disabled checked="false" />
+                            }
+                            @house
+                        </label>
+                    }
+
+                    <button class="award-btn" @onclick="AwardPointsAsync">Award points</button>
+                </div>
+            </div>
         </div>
-    </div>
-}
+    }
+
+    @if (_showHouseCup)
+    {
+        <div class="housecup-overlay">
+            <div class="housecup-card">
+                <div class="housecup-title">House Cup</div>
+
+                <div class="cups">
+                    @foreach (var col in HouseCupColumns())
+                    {
+                        <div class="tube @col.Css"
+                             data-delta="@col.Delta"
+                             data-points="@col.To">
+
+                            <div class="tube-frame"></div>
+
+                            <div class="tube-glass">
+                                <div class="diamond-layer"></div>
+                                <div class="tube-highlight"></div>
+                            </div>
+
+                            <div class="tube-cap top"></div>
+                            <div class="tube-cap bottom"></div>
+
+                            <div class="tube-badge">
+                                <img src="/images/@(col.Css).png" class="house-crest" alt="@col.Label" />
+                                <div class="tube-house">@col.Label</div>
+                                <div class="tube-score">@col.To</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+                <div class="housecup-actions">
+                    <button class="housecup-next" @onclick="CloseHouseCup">Ulykke forbi</button>
+                </div>
+
+            </div>
+        </div>
+    }
+
+    @if (_showRules)
+    {
+        <div class="rules-overlay @(_isSayingGoodbye ? "goodbye-mode" : "")" @onclick="CloseRules">
+            
+            @if (!_isSayingGoodbye)
+            {
+                <div class="rules-content-box" @onclick:stopPropagation="true">
+                    <button class="rules-close-btn" @onclick="CloseRules">✖</button>
+
+                    <div class="rules-text-section">
+                        <h2>Regler:</h2>
+                        <ul class="rules-list">
+                            <li>Et hus vælger kategori og pointstørrelse</li>
+                            <li>Alle huse har mulighed for at svare</li>
+                            <li>Turen går videre til næste hus med uret, som dernæst vælger</li>
+                            <li>Expelliarmus fratager et hus at svare på det gældende spørgsmål</li>
+                            <li>Expelliarmus kan benyttes en gang</li>
+                        </ul>
+                    </div>
+
+                    <div class="rules-image-section">
+                        <img src="/images/dumbledore-standing.png" class="rules-dumbledore-img" alt="Dumbledore" />
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="dumbledore-solo-container">
+                    <img src="/images/dumbledore-standing.png" class="dumbledore-solo talking" alt="Dumbledore Speaking" />
+                </div>
+            }
+        </div>
+    }
+
+</div>
 
 
 @code {
     private Quiz _quiz = null!;
     private Question? _question;
     private bool _showVideo = false;
+    private bool _showRules = false;
+    private bool _isSayingGoodbye = false; // New state for "Tak Dumbledore"
     private string textClass = string.Empty;
 
     private readonly HashSet<string> _answered = new();
@@ -214,11 +238,58 @@
             [House.Hufflepuff] = 0,
         };
 
+    private Dictionary<House, bool> _expelliarmusUsed = new();
+    private House? _castingHouse = null; 
+    private House? _blockedHouse = null;
+
+    private DotNetObjectReference<Jeopardy>? _dotNetRef;
+
+    private string GetHouseCss(House h) => h switch 
+    {
+        House.Gryffindor => "gryff",
+        House.Slytherin => "slyth",
+        House.Ravenclaw => "raven",
+        House.Hufflepuff => "huff",
+        _ => ""
+    };
+
+    private bool IsBlocked(House h) => _blockedHouse.HasValue && _blockedHouse.Value == h;
+
+    private void PrepareExpelliarmus(House source)
+    {
+        if (!_expelliarmusUsed[source])
+        {
+            _castingHouse = source;
+        }
+    }
+
+    private async Task CastExpelliarmus(House target)
+    {
+        if (_castingHouse.HasValue)
+        {
+            _expelliarmusUsed[_castingHouse.Value] = true;
+            _blockedHouse = target;
+            _awardTicks[target] = false;
+            _castingHouse = null; 
+            await JSRuntime.InvokeVoidAsync("triggerExplosion");
+        }
+    }
+
+    private void CancelExpelliarmus()
+    {
+        _castingHouse = null;
+    }
+
     private void CloseHouseCup()
     {
         _showHouseCup = false;
     }
 
+    private void CloseRules()
+    {
+        _showRules = false;
+        _isSayingGoodbye = false; // Reset state
+    }
 
     private readonly Dictionary<House, bool> _awardTicks = new()
         {
@@ -232,7 +303,6 @@
     private Dictionary<House, int> _prevPoints = new();
     private Dictionary<House, int> _nextPoints = new();
 
-    // --- FIX IS HERE: Multiplied by 100 to convert difficulty (1-5) to points (100-500) ---
     private int CurrentQuestionPoints =>
         _question is null ? 0 : _question.Difficulty * 100;
 
@@ -285,6 +355,55 @@
         _quiz = await quizService.GetQuizQuestionsAsync(_quiz);
         _prevPoints = _housePoints.ToDictionary(x => x.Key, x => x.Value);
         _nextPoints = _housePoints.ToDictionary(x => x.Key, x => x.Value);
+
+        foreach (var h in Enum.GetValues<House>())
+        {
+            _expelliarmusUsed[h] = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _dotNetRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("initBackgroundLoop");
+            await JSRuntime.InvokeVoidAsync("initSpeechRecognition", _dotNetRef);
+        }
+    }
+
+    // --- 1. OPEN RULES ---
+    [JSInvokable]
+    public async Task TriggerDumbledoreEvent()
+    {
+        _showRules = true;
+        _isSayingGoodbye = false;
+        StateHasChanged();
+
+        await Task.Delay(2000);
+        await JSRuntime.InvokeVoidAsync("playRulesAudio");
+    }
+
+    // --- 2. SWITCH TO SOLO DUMBLEDORE (Talking) ---
+    [JSInvokable]
+    public void TriggerThanksEvent()
+    {
+        _isSayingGoodbye = true; // Changes UI to just Dumbledore
+        StateHasChanged();
+    }
+
+    // --- 3. CLOSE OVERLAY (Finished Talking) ---
+    [JSInvokable]
+    public void TriggerCloseRules()
+    {
+        _showRules = false;
+        _isSayingGoodbye = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _dotNetRef?.Dispose();
     }
 
     private record TubeCol(string Css, string Label, int FromPct, int ToPct, int To, int Delta);
@@ -316,6 +435,8 @@
             return;
 
         ResetTicks();
+        _castingHouse = null; 
+        _blockedHouse = null; 
 
         _showVideo = true;
         _question = _quiz.Questions.FirstOrDefault(q => q.Difficulty == difficulty && q.Category == category);
