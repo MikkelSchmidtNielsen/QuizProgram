@@ -26,7 +26,7 @@
 
     <h1>Potter 'n' Pipes</h1>
 
-    @if (!_showPodium)
+    @if (!_showPodium && !_showRevealButton)
     {
         <div class="table-container">
             <table>
@@ -147,7 +147,7 @@
         </div>
     }
 
-    @if (_showHouseCup)
+    @if (_showHouseCup && !_showRevealButton)
     {
         <div class="housecup-overlay">
             <div class="housecup-card">
@@ -184,6 +184,15 @@
                 </div>
 
             </div>
+        </div>
+    }
+
+    @if (_showRevealButton)
+    {
+        <div class="game-over-overlay">
+            <button class="reveal-btn" @onclick="RunPodiumCeremony">
+                Afslør Vinderen
+            </button>
         </div>
     }
 
@@ -274,8 +283,9 @@
     private bool _isSayingGoodbye = false;
     private string textClass = string.Empty;
 
-    // Podium State
+    // Podium & Game End State
     private bool _showPodium = false;
+    private bool _showRevealButton = false; // New state for the button
     private bool _reveal3rd = false;
     private bool _reveal2nd = false;
     private bool _reveal1st = false;
@@ -340,14 +350,6 @@
     private void CloseHouseCup()
     {
         _showHouseCup = false;
-
-        // CHECK FOR GAME OVER HERE
-        // If we have answered all questions (assuming 5 rows * 5 cols = 25 questions)
-        // Or strictly count based on quiz data
-        if (_answered.Count >= _quiz.Questions.Count)
-        {
-            RunPodiumCeremony();
-        }
     }
 
     private void CloseRules()
@@ -393,20 +395,35 @@
 
         _nextPoints = _housePoints.ToDictionary(k => k.Key, v => v.Value);
 
-        _showHouseCup = true;
-
-        await InvokeAsync(StateHasChanged);
-        await Task.Delay(50);
-        await JSRuntime.InvokeVoidAsync("houseCupAnimate");
-        await JSRuntime.InvokeVoidAsync("houseCupDiamonds");
-
+        // Hide Video Overlay
         _showVideo = false;
         textClass = string.Empty;
         ResetTicks();
+
+        // FIX: Check against 25 (Board Size) instead of total database questions
+        // This ensures it triggers even if your DB has extra/duplicate data
+        if (_answered.Count >= 25)
+        {
+            // Show ONLY the Reveal Button
+            _showRevealButton = true;
+        }
+        else
+        {
+            // Show Normal House Cup
+            _showHouseCup = true;
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(50);
+            await JSRuntime.InvokeVoidAsync("houseCupAnimate");
+            await JSRuntime.InvokeVoidAsync("houseCupDiamonds");
+        }
     }
 
     private async void RunPodiumCeremony()
     {
+        // Hide button, show podium
+        _showRevealButton = false;
+        _showPodium = true;
+
         // 1. Sort Houses
         _ranks = _housePoints
             .Select(x => (House: x.Key, Points: x.Value))
@@ -414,7 +431,6 @@
             .ToList();
 
         // 2. Initialize State
-        _showPodium = true;
         _reveal3rd = false;
         _reveal2nd = false;
         _reveal1st = false;
@@ -424,27 +440,22 @@
         // 3. Sequence
         await Task.Delay(1000);
 
-        // Reveal 3rd
         _reveal3rd = true;
         StateHasChanged();
         await Task.Delay(2500);
 
-        // Reveal 2nd
         _reveal2nd = true;
         StateHasChanged();
         await Task.Delay(2500);
 
-        // Announcement Text
         _showWinnerAnnouncement = true;
         StateHasChanged();
         await Task.Delay(3500);
 
-        // Reveal 1st & Hide Text
         _showWinnerAnnouncement = false;
         _reveal1st = true;
         StateHasChanged();
 
-        // CONFETTI!
         await JSRuntime.InvokeVoidAsync("triggerWinnerConfetti");
     }
 
