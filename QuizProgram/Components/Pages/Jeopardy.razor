@@ -26,41 +26,45 @@
 
     <h1>Potter 'n' Pipes</h1>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <td width="250">Halfblood prince</td>
-                    <td width="250">Hogwarts History</td>
-                    <td width="250">Muggles World</td>
-                    <td width="250">Four Houses of Hogwarts</td>
-                    <td width="250">Random Pipes</td>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 1; i <= 5; i++)
-                {
+    @if (!_showPodium)
+    {
+        <div class="table-container">
+            <table>
+                <thead>
                     <tr>
-                        <td class="@GetTileTdClass(i, "Halfblood prince")">
-                            <p @onclick="@(() => OnTileClick(i, "Halfblood prince"))">@(i * 100)</p>
-                        </td>
-                        <td class="@GetTileTdClass(i, "Hogwarts History")">
-                            <p @onclick="@(() => OnTileClick(i, "Hogwarts History"))">@(i * 100)</p>
-                        </td>
-                        <td class="@GetTileTdClass(i, "Muggles World")">
-                            <p @onclick="@(() => OnTileClick(i, "Muggles World"))">@(i * 100)</p>
-                        </td>
-                        <td class="@GetTileTdClass(i, "Four Houses of Hogwarts")">
-                            <p @onclick="@(() => OnTileClick(i, "Four Houses of Hogwarts"))">@(i * 100)</p>
-                        </td>
-                        <td class="@GetTileTdClass(i, "Random Pipes")">
-                            <p @onclick="@(() => OnTileClick(i, "Random Pipes"))">@(i * 100)</p>
-                        </td>
+                        <td width="250">Halfblood prince</td>
+                        <td width="250">Hogwarts History</td>
+                        <td width="250">Muggles World</td>
+                        <td width="250">Four Houses of Hogwarts</td>
+                        <td width="250">Random Pipes</td>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        var currentDifficulty = i;
+                        <tr>
+                            <td class="@GetTileTdClass(currentDifficulty, "Halfblood prince")">
+                                <p @onclick="@(() => OnTileClick(currentDifficulty, "Halfblood prince"))">@(currentDifficulty * 100)</p>
+                            </td>
+                            <td class="@GetTileTdClass(currentDifficulty, "Hogwarts History")">
+                                <p @onclick="@(() => OnTileClick(currentDifficulty, "Hogwarts History"))">@(currentDifficulty * 100)</p>
+                            </td>
+                            <td class="@GetTileTdClass(currentDifficulty, "Muggles World")">
+                                <p @onclick="@(() => OnTileClick(currentDifficulty, "Muggles World"))">@(currentDifficulty * 100)</p>
+                            </td>
+                            <td class="@GetTileTdClass(currentDifficulty, "Four Houses of Hogwarts")">
+                                <p @onclick="@(() => OnTileClick(currentDifficulty, "Four Houses of Hogwarts"))">@(currentDifficulty * 100)</p>
+                            </td>
+                            <td class="@GetTileTdClass(currentDifficulty, "Random Pipes")">
+                                <p @onclick="@(() => OnTileClick(currentDifficulty, "Random Pipes"))">@(currentDifficulty * 100)</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 
     @if (_showVideo)
     {
@@ -82,12 +86,15 @@
                             @foreach (var house in Enum.GetValues<House>())
                             {
                                 var isUsed = _expelliarmusUsed[house];
-                                <button class="expelliarmus-btn @GetHouseCss(house) @(isUsed ? "used" : "")" 
+                                <button class="expelliarmus-btn @GetHouseCss(house) @(isUsed ? "used" : "")"
                                         @onclick="() => PrepareExpelliarmus(house)"
                                         disabled="@isUsed">
                                     <img src="/images/@(GetHouseCss(house)).png" class="mini-crest" />
                                     <span>@house</span>
-                                    @if(isUsed) { <span class="used-mark">Used</span> }
+                                    @if (isUsed)
+                                    {
+                                        <span class="used-mark">Used</span>
+                                    }
                                 </button>
                             }
                         </div>
@@ -100,7 +107,7 @@
                             {
                                 if (target != _castingHouse)
                                 {
-                                    <button class="expelliarmus-btn target @GetHouseCss(target)" 
+                                    <button class="expelliarmus-btn target @GetHouseCss(target)"
                                             @onclick="() => CastExpelliarmus(target)">
                                         <img src="/images/@(GetHouseCss(target)).png" class="mini-crest" />
                                         <span>@target</span>
@@ -120,13 +127,13 @@
                     @foreach (var house in Enum.GetValues<House>())
                     {
                         var isBlocked = IsBlocked(house);
-                        
+
                         <label class="house-tick @GetHouseCss(house) @(isBlocked ? "blocked" : "")">
                             @if (!isBlocked)
                             {
                                 <input type="checkbox" @bind="_awardTicks[house]" />
                             }
-                            else 
+                            else
                             {
                                 <input type="checkbox" disabled checked="false" />
                             }
@@ -171,7 +178,7 @@
                         </div>
                     }
                 </div>
-                
+
                 <div class="housecup-actions">
                     <button class="housecup-next" @onclick="CloseHouseCup">Ulykke forbi</button>
                 </div>
@@ -183,12 +190,10 @@
     @if (_showRules)
     {
         <div class="rules-overlay @(_isSayingGoodbye ? "goodbye-mode" : "")" @onclick="CloseRules">
-            
             @if (!_isSayingGoodbye)
             {
                 <div class="rules-content-box" @onclick:stopPropagation="true">
                     <button class="rules-close-btn" @onclick="CloseRules">✖</button>
-
                     <div class="rules-text-section">
                         <h2>Regler:</h2>
                         <ul class="rules-list">
@@ -199,7 +204,6 @@
                             <li>Expelliarmus kan benyttes en gang</li>
                         </ul>
                     </div>
-
                     <div class="rules-image-section">
                         <img src="/images/dumbledore-standing.png" class="rules-dumbledore-img" alt="Dumbledore" />
                     </div>
@@ -214,6 +218,51 @@
         </div>
     }
 
+    @if (_showPodium && _ranks.Any())
+    {
+        <div class="podium-overlay">
+
+            @if (_showWinnerAnnouncement)
+            {
+                <div class="winner-text-anim">And the house cup goes to...</div>
+            }
+
+            <div class="podium-stage">
+                <div class="podium-column second @(_reveal2nd ? "visible" : "")">
+                    <div class="podium-crest-wrapper">
+                        <img src="/images/@(GetHouseCss(_ranks[1].House)).png" class="podium-crest" />
+                    </div>
+                    <div class="podium-block">
+                        <div class="podium-rank">2</div>
+                        <div class="podium-points">@_ranks[1].Points</div>
+                    </div>
+                </div>
+
+                <div class="podium-column first @(_reveal1st ? "visible" : "")">
+                    <div class="podium-crest-wrapper">
+                        <img src="/images/@(GetHouseCss(_ranks[0].House)).png" class="podium-crest" />
+                    </div>
+                    <div class="podium-block">
+                        <div class="podium-rank">1</div>
+                        <div class="podium-points">@_ranks[0].Points</div>
+                    </div>
+                </div>
+
+                <div class="podium-column third @(_reveal3rd ? "visible" : "")">
+                    <div class="podium-crest-wrapper">
+                        <img src="/images/@(GetHouseCss(_ranks[2].House)).png" class="podium-crest" />
+                    </div>
+                    <div class="podium-block">
+                        <div class="podium-rank">3</div>
+                        <div class="podium-points">@_ranks[2].Points</div>
+                    </div>
+                </div>
+            </div>
+
+            <img src="/images/dumbledore-standing.png" class="podium-dumbledore" />
+        </div>
+    }
+
 </div>
 
 
@@ -222,8 +271,16 @@
     private Question? _question;
     private bool _showVideo = false;
     private bool _showRules = false;
-    private bool _isSayingGoodbye = false; // New state for "Tak Dumbledore"
+    private bool _isSayingGoodbye = false;
     private string textClass = string.Empty;
+
+    // Podium State
+    private bool _showPodium = false;
+    private bool _reveal3rd = false;
+    private bool _reveal2nd = false;
+    private bool _reveal1st = false;
+    private bool _showWinnerAnnouncement = false;
+    private List<(House House, int Points)> _ranks = new();
 
     private readonly HashSet<string> _answered = new();
     private static string TileKey(int difficulty, string category) => $"{category}::{difficulty}";
@@ -239,12 +296,12 @@
         };
 
     private Dictionary<House, bool> _expelliarmusUsed = new();
-    private House? _castingHouse = null; 
+    private House? _castingHouse = null;
     private House? _blockedHouse = null;
 
     private DotNetObjectReference<Jeopardy>? _dotNetRef;
 
-    private string GetHouseCss(House h) => h switch 
+    private string GetHouseCss(House h) => h switch
     {
         House.Gryffindor => "gryff",
         House.Slytherin => "slyth",
@@ -270,7 +327,7 @@
             _expelliarmusUsed[_castingHouse.Value] = true;
             _blockedHouse = target;
             _awardTicks[target] = false;
-            _castingHouse = null; 
+            _castingHouse = null;
             await JSRuntime.InvokeVoidAsync("triggerExplosion");
         }
     }
@@ -283,12 +340,20 @@
     private void CloseHouseCup()
     {
         _showHouseCup = false;
+
+        // CHECK FOR GAME OVER HERE
+        // If we have answered all questions (assuming 5 rows * 5 cols = 25 questions)
+        // Or strictly count based on quiz data
+        if (_answered.Count >= _quiz.Questions.Count)
+        {
+            RunPodiumCeremony();
+        }
     }
 
     private void CloseRules()
     {
         _showRules = false;
-        _isSayingGoodbye = false; // Reset state
+        _isSayingGoodbye = false;
     }
 
     private readonly Dictionary<House, bool> _awardTicks = new()
@@ -340,6 +405,48 @@
         ResetTicks();
     }
 
+    private async void RunPodiumCeremony()
+    {
+        // 1. Sort Houses
+        _ranks = _housePoints
+            .Select(x => (House: x.Key, Points: x.Value))
+            .OrderByDescending(x => x.Points)
+            .ToList();
+
+        // 2. Initialize State
+        _showPodium = true;
+        _reveal3rd = false;
+        _reveal2nd = false;
+        _reveal1st = false;
+        _showWinnerAnnouncement = false;
+        StateHasChanged();
+
+        // 3. Sequence
+        await Task.Delay(1000);
+
+        // Reveal 3rd
+        _reveal3rd = true;
+        StateHasChanged();
+        await Task.Delay(2500);
+
+        // Reveal 2nd
+        _reveal2nd = true;
+        StateHasChanged();
+        await Task.Delay(2500);
+
+        // Announcement Text
+        _showWinnerAnnouncement = true;
+        StateHasChanged();
+        await Task.Delay(3500);
+
+        // Reveal 1st & Hide Text
+        _showWinnerAnnouncement = false;
+        _reveal1st = true;
+        StateHasChanged();
+
+        // CONFETTI!
+        await JSRuntime.InvokeVoidAsync("triggerWinnerConfetti");
+    }
 
     private bool IsAnswered(int difficulty, string category)
         => _answered.Contains(TileKey(difficulty, category));
@@ -372,27 +479,23 @@
         }
     }
 
-    // --- 1. OPEN RULES ---
     [JSInvokable]
     public async Task TriggerDumbledoreEvent()
     {
         _showRules = true;
         _isSayingGoodbye = false;
         StateHasChanged();
-
         await Task.Delay(2000);
         await JSRuntime.InvokeVoidAsync("playRulesAudio");
     }
 
-    // --- 2. SWITCH TO SOLO DUMBLEDORE (Talking) ---
     [JSInvokable]
     public void TriggerThanksEvent()
     {
-        _isSayingGoodbye = true; // Changes UI to just Dumbledore
+        _isSayingGoodbye = true;
         StateHasChanged();
     }
 
-    // --- 3. CLOSE OVERLAY (Finished Talking) ---
     [JSInvokable]
     public void TriggerCloseRules()
     {
@@ -434,16 +537,17 @@
         if (IsAnswered(difficulty, category))
             return;
 
-        ResetTicks();
-        _castingHouse = null; 
-        _blockedHouse = null; 
+        var foundQuestion = _quiz.Questions.FirstOrDefault(q => q.Difficulty == difficulty && q.Category == category);
 
-        _showVideo = true;
-        _question = _quiz.Questions.FirstOrDefault(q => q.Difficulty == difficulty && q.Category == category);
-
-        if (_question is null)
+        if (foundQuestion is null)
             return;
 
+        _question = foundQuestion;
+        ResetTicks();
+        _castingHouse = null;
+        _blockedHouse = null;
+
+        _showVideo = true;
         textClass = string.Empty;
 
         await Task.Delay(100);

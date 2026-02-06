@@ -412,3 +412,50 @@ window.playRulesAudio = () => {
         audio.play().catch(e => console.log("Audio play failed:", e));
     }
 };
+
+/* ---------------------------------------------------- */
+/* WINNER CONFETTI                                      */
+/* ---------------------------------------------------- */
+window.triggerWinnerConfetti = () => {
+    const board = document.getElementById("jeopardy-board");
+    if (!board) return;
+
+    const colors = ["#f6e39a", "#d4af37", "#ffffff", "#ff0000", "#00ff00", "#0000ff"];
+
+    // Create 300 confetti particles
+    for (let i = 0; i < 300; i++) {
+        const confetti = document.createElement("div");
+        confetti.style.position = "fixed";
+        confetti.style.zIndex = "5000";
+        confetti.style.width = Math.random() * 10 + 5 + "px";
+        confetti.style.height = Math.random() * 5 + 5 + "px";
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        // Random starting position (top of screen)
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.top = "-10vh";
+
+        // Random animation properties
+        const duration = Math.random() * 3 + 2 + "s";
+        const delay = Math.random() * 2 + "s";
+
+        confetti.style.animation = `confetti-fall ${duration} linear ${delay} forwards`;
+
+        // Random rotation
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+        board.appendChild(confetti);
+
+        // Cleanup
+        setTimeout(() => confetti.remove(), 6000);
+    }
+};
+
+// Add styles dynamically for confetti fall
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes confetti-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}`;
+document.head.appendChild(style);

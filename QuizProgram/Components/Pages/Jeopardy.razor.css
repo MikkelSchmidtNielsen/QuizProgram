@@ -931,3 +931,170 @@ tbody td {
         will-change: transform;
     }
 }
+
+/* ... (keep existing CSS) ... */
+
+/* --- PODIUM CEREMONY --- */
+.podium-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 4000; /* Highest priority */
+    background: radial-gradient(circle at center, #1a2a4f 0%, #050912 100%);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 5vh;
+}
+
+.podium-stage {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0; /* Bars touch */
+    position: relative;
+    z-index: 2;
+    margin-right: 250px; /* Space for Dumbledore */
+}
+
+.podium-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    width: 180px;
+    opacity: 0;
+    transform: translateY(100px);
+    transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+    .podium-column.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* PODIUM HEIGHTS */
+    .podium-column.second .podium-block {
+        height: 250px;
+        background: linear-gradient(to top, #7f8c8d, #bdc3c7);
+    }
+
+    .podium-column.first .podium-block {
+        height: 380px;
+        background: linear-gradient(to top, #f1c40f, #f39c12);
+        z-index: 2;
+        box-shadow: 0 0 40px rgba(243, 156, 18, 0.4);
+    }
+
+    .podium-column.third .podium-block {
+        height: 160px;
+        background: linear-gradient(to top, #a17953, #d2b48c);
+    }
+
+.podium-block {
+    width: 100%;
+    border: 2px solid rgba(255,255,255,0.1);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    position: relative;
+}
+
+.podium-rank {
+    font-family: 'Harry P', serif;
+    font-size: 80px;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.podium-points {
+    font-family: InkPot, serif;
+    font-size: 24px;
+}
+
+.podium-crest-wrapper {
+    margin-bottom: 20px;
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+}
+
+.podium-crest {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+}
+
+/* DUMBLEDORE ON THE RIGHT */
+.podium-dumbledore {
+    position: absolute;
+    right: 5%;
+    bottom: 0;
+    max-height: 70vh;
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.7));
+    z-index: 3;
+}
+
+/* WINNER ANNOUNCEMENT TEXT */
+.winner-text-anim {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Harry P', serif;
+    font-size: clamp(60px, 8vw, 120px);
+    color: #f6e39a;
+    text-shadow: 0 0 30px #fbc02d;
+    z-index: 10;
+    animation: zoom-fade-text 3s ease-out forwards;
+    white-space: nowrap;
+    text-align: center;
+}
+
+@keyframes zoom-fade-text {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.5);
+        filter: blur(10px);
+    }
+}
+
+@media (max-width: 900px) {
+    .podium-stage {
+        margin-right: 0;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .podium-column {
+        width: 30%;
+    }
+
+    .podium-crest {
+        width: 60px;
+        height: 60px;
+    }
+
+    .podium-dumbledore {
+        right: -20px;
+        max-height: 40vh;
+        opacity: 0.8;
+    }
+}
