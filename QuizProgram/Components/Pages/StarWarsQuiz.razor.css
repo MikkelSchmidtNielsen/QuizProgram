@@ -1,0 +1,36 @@
+.star-wars-quiz {
+    min-height: calc(100vh - 3rem);
+    padding: 3rem 1.25rem 5rem;
+    background: radial-gradient(circle at top, #20283a 0, #0b0e17 45%, #05060a 100%);
+    color: #f5f7ff;
+    border-radius: 18px;
+}
+
+.quiz-header, .question-card, .result-card { max-width: 850px; margin: 0 auto; }
+.quiz-header { text-align: center; margin-bottom: 2rem; }
+.eyebrow { color: #ffd43b; letter-spacing: .12em; text-transform: uppercase; font-size: .78rem; }
+.quiz-header h1 { font-size: clamp(2.2rem, 6vw, 4rem); margin: .4rem 0; }
+.quiz-header p { color: #c6ccda; }
+.progress-track { height: 8px; background: #303747; border-radius: 999px; overflow: hidden; margin: 1.5rem 0 .5rem; }
+.progress-bar { height: 100%; background: #ffd43b; transition: width .3s ease; }
+.progress-text, .question-number { color: #aeb6c7; font-size: .9rem; }
+.question-card, .result-card { background: rgba(18, 22, 34, .94); border: 1px solid #394154; border-radius: 20px; padding: clamp(1.25rem, 4vw, 2.5rem); box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.question-card h2 { font-size: clamp(1.35rem, 3vw, 2rem); line-height: 1.3; margin: .6rem 0 1.5rem; }
+.answers { display: grid; gap: .85rem; }
+.answer-button { display: flex; align-items: center; gap: .9rem; width: 100%; padding: 1rem 1.1rem; border: 1px solid #3d4659; border-radius: 12px; background: #171d2a; color: #f5f7ff; text-align: left; cursor: pointer; transition: transform .15s, border-color .15s, background .15s; font-size: 1rem; }
+.answer-button:not(:disabled):hover { transform: translateY(-2px); border-color: #ffd43b; background: #20283a; }
+.answer-button:disabled { cursor: default; }
+.answer-letter { display: grid; place-items: center; min-width: 2rem; height: 2rem; border-radius: 50%; background: #303747; color: #ffd43b; font-weight: 700; }
+.correct-answer { border-color: #39d98a; background: rgba(57,217,138,.13); }
+.wrong-answer { border-color: #ff5d6c; background: rgba(255,93,108,.12); }
+.feedback { margin-top: 1.25rem; padding: 1rem; border-radius: 12px; display: grid; gap: .7rem; }
+.feedback.correct { border: 1px solid #39d98a; background: rgba(57,217,138,.1); }
+.feedback.incorrect { border: 1px solid #ff5d6c; background: rgba(255,93,108,.1); }
+.next-button { justify-self: end; border: 0; border-radius: 10px; padding: .75rem 1.1rem; background: #ffd43b; color: #10131b; font-weight: 800; cursor: pointer; }
+.next-button:hover { filter: brightness(1.08); }
+.result-card { text-align: center; padding-top: 3rem; padding-bottom: 3rem; }
+.result-icon { font-size: 4rem; }
+.result-card h2 { font-size: 2rem; }
+.score { font-size: 4rem; font-weight: 900; margin: .5rem 0; color: #ffd43b; }
+.result-message { color: #c6ccda; margin-bottom: 1.5rem; }
+@media (max-width: 600px) { .star-wars-quiz { padding: 2rem .75rem 3rem; } .next-button { width: 100%; } }
