@@ -1,0 +1,129 @@
+@page "/star-wars-quiz"
+@rendermode InteractiveServer
+
+<PageTitle>Star Wars Quiz</PageTitle>
+
+<div class="star-wars-quiz">
+    <header class="quiz-header">
+        <p class="eyebrow">A long time ago in a galaxy far, far away...</p>
+        <h1>⭐ Star Wars Quiz</h1>
+        <p>20 spørgsmål. 20 chancer for at bevise, at du ikke er en Gungan.</p>
+        <div class="progress-track"><div class="progress-bar" style="width:@ProgressPercent%"></div></div>
+        <span class="progress-text">Spørgsmål @(_currentQuestionIndex + 1) af @Questions.Count</span>
+    </header>
+
+    @if (!_quizFinished)
+    {
+        var question = Questions[_currentQuestionIndex];
+        <section class="question-card">
+            <span class="question-number">@(_currentQuestionIndex + 1). af @Questions.Count</span>
+            <h2>@question.Text</h2>
+            <div class="answers">
+                @for (var i = 0; i < question.Answers.Count; i++)
+                {
+                    var answerIndex = i;
+                    <button class="answer-button @(GetAnswerClass(answerIndex))" @onclick="() => SelectAnswer(answerIndex)" disabled="@_answerSubmitted">
+                        <span class="answer-letter">@((char)('A' + answerIndex))</span>
+                        <span>@question.Answers[answerIndex]</span>
+                    </button>
+                }
+            </div>
+            @if (_answerSubmitted)
+            {
+                <div class="feedback @(IsCorrect ? "correct" : "incorrect")">
+                    <strong>@(IsCorrect ? "The Force er med dig!" : "Det var den mørke side...")</strong>
+                    @if (!IsCorrect) { <span>Det rigtige svar er <strong>@question.Answers[question.CorrectAnswer]</strong>.</span> }
+                    <button class="next-button" @onclick="NextQuestion">@(_currentQuestionIndex == Questions.Count - 1 ? "Se resultat" : "Næste spørgsmål →")</button>
+                </div>
+            }
+        </section>
+    }
+    else
+    {
+        <section class="result-card">
+            <div class="result-icon">@(Score >= 16 ? "🏆" : Score >= 10 ? "⚔️" : "🤖")</div>
+            <h2>Quizzen er fuldført!</h2>
+            <p class="score">@Score / @Questions.Count</p>
+            <p class="result-message">@GetResultMessage()</p>
+            <button class="next-button" @onclick="RestartQuiz">Tag quizzen igen</button>
+        </section>
+    }
+</div>
+
+@code {
+    private int _currentQuestionIndex;
+    private int Score;
+    private int? _selectedAnswer;
+    private bool _answerSubmitted;
+    private bool _quizFinished;
+
+    private double ProgressPercent => ((_currentQuestionIndex + 1) / (double)Questions.Count) * 100;
+    private bool IsCorrect => _selectedAnswer == Questions[_currentQuestionIndex].CorrectAnswer;
+
+    private void SelectAnswer(int answerIndex)
+    {
+        if (_answerSubmitted) return;
+        _selectedAnswer = answerIndex;
+        _answerSubmitted = true;
+        if (IsCorrect) Score++;
+    }
+
+    private void NextQuestion()
+    {
+        if (_currentQuestionIndex == Questions.Count - 1) { _quizFinished = true; return; }
+        _currentQuestionIndex++;
+        _selectedAnswer = null;
+        _answerSubmitted = false;
+    }
+
+    private void RestartQuiz()
+    {
+        _currentQuestionIndex = 0;
+        Score = 0;
+        _selectedAnswer = null;
+        _answerSubmitted = false;
+        _quizFinished = false;
+    }
+
+    private string GetAnswerClass(int answerIndex)
+    {
+        if (!_answerSubmitted) return "";
+        if (answerIndex == Questions[_currentQuestionIndex].CorrectAnswer) return "correct-answer";
+        return answerIndex == _selectedAnswer ? "wrong-answer" : "";
+    }
+
+    private string GetResultMessage() => Score switch
+    {
+        >= 18 => "Du er en Jedi Master. Selv Yoda ville nikke anerkendende.",
+        >= 16 => "Imponerende! Du kender din galakse bedre end de fleste.",
+        >= 12 => "Godkendt Padawan. Der er stadig lidt træning tilbage.",
+        >= 8 => "Ikke helt klar til Jedi-ordenen endnu.",
+        _ => "Måske skulle du starte med Episode IV igen. Og denne gang: følg med."
+    };
+
+    private record QuizQuestion(string Text, List<string> Answers, int CorrectAnswer);
+
+    private static readonly List<QuizQuestion> Questions =
+    [
+        new("Hvad hedder Luke Skywalkers far?", ["Obi-Wan Kenobi", "Anakin Skywalker", "Han Solo", "Mace Windu"], 1),
+        new("Hvilken planet kommer Luke Skywalker fra?", ["Naboo", "Coruscant", "Tatooine", "Hoth"], 2),
+        new("Hvad hedder Han Solos skib?", ["X-wing", "Millennium Falcon", "Slave I", "Razor Crest"], 1),
+        new("Hvem er far til Luke Skywalker?", ["Darth Vader", "Palpatine", "Kylo Ren", "Count Dooku"], 0),
+        new("Hvilken farve har Yodas lyssværd?", ["Blå", "Rød", "Lilla", "Grøn"], 3),
+        new("Hvad hedder prinsesse Leias hjemplanet?", ["Alderaan", "Endor", "Kashyyyk", "Dagobah"], 0),
+        new("Hvilken art er Chewbacca?", ["Wookiee", "Ewok", "Twi'lek", "Rodian"], 0),
+        new("Hvem er C-3PO's bedste ven?", ["R2-D2", "BB-8", "K-2SO", "D-O"], 0),
+        new("Hvem besejrer Darth Maul på Tatooine i Star Wars: Rebels?", ["Luke Skywalker", "Obi-Wan Kenobi", "Ahsoka Tano", "Ezra Bridger"], 1),
+        new("Hvilket navn bruger Palpatine som Sith-lord?", ["Darth Sidious", "Darth Vader", "Darth Bane", "Snoke"], 0),
+        new("Hvilken planet er sæde for Jedi-ordenen i prequel-trilogien?", ["Coruscant", "Mustafar", "Geonosis", "Kamino"], 0),
+        new("Hvad hedder Boba Fetts far?", ["Jango Fett", "Cad Bane", "Din Djarin", "Galen Erso"], 0),
+        new("Hvilken orden tilhørte Darth Vader før han blev Sith?", ["Jedi-ordenen", "Nightsisters", "Inquisitorius", "Sith-ordenen"], 0),
+        new("Hvad hedder Obi-Wan Kenobis mester?", ["Qui-Gon Jinn", "Mace Windu", "Yoda", "Plo Koon"], 0),
+        new("Hvilken planet er hjemsted for Ewoks?", ["Endor", "Naboo", "Felucia", "Dathomir"], 0),
+        new("Hvilken Sith-lord er egentlig Sheev Palpatine?", ["Darth Maul", "Darth Tyranus", "Darth Sidious", "Darth Plagueis"], 2),
+        new("Hvad er Kylo Rens rigtige navn?", ["Ben Solo", "Jacen Syndulla", "Finn Calrissian", "Anakin Solo"], 0),
+        new("Hvilken karakter forbindes med udtrykket 'This is the way'?", ["Din Djarin", "Bo-Katan Kryze", "Moff Gideon", "Paz Vizsla"], 0),
+        new("Hvad hedder Anakins padawan?", ["Sabine Wren", "Ahsoka Tano", "Barriss Offee", "Shaak Ti"], 1),
+        new("Hvilken film introducerede Darth Vader første gang?", ["The Empire Strikes Back", "Return of the Jedi", "A New Hope", "Revenge of the Sith"], 2)
+    ];
+}
